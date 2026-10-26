@@ -1,0 +1,76 @@
+.gitignore
+  s_4576ba6009af55::t_f91fc8ddf45cc6 1-4
+dist/index.html
+  s_4576ba6009af55::t_3508b5f341d1e4 1-4182
+docs/AGENTS.md
+  s_4576ba6009af55::t_0f63f39363d492 1-74
+index.html
+  s_4576ba6009af55::t_49833c73819797 1-133
+package-lock.json
+  s_4576ba6009af55::t_c96aaeec12d635 1-1355
+package.json
+  s_4576ba6009af55::t_a99bd768e8a824 1-22
+scripts/extract-palettes.mjs
+  s_4576ba6009af55::t_e3af489b5a914a 1-43
+src/core/color.ts
+  s_4576ba6009af55::t_8c07ab194fbd15 1-41
+src/core/quantize.ts
+  s_4576ba6009af55::t_b230e4082094d6 1-116
+src/core/rasterize.ts
+  s_4576ba6009af55::t_2855b744fb51ce 1-63
+src/core/types.ts
+  s_4576ba6009af55::t_ee34434f30171c 1-36
+src/data/palettes.ts
+  s_4576ba6009af55::t_6089159bad3499 1-56594
+src/data/sizes.ts
+  s_4576ba6009af55::t_b5812e68dd434f 1-16
+src/main.ts
+  s_4576ba6009af55::t_21d9a154b94355 1-345
+src/persist/saveFile.ts
+  s_4576ba6009af55::t_772b5742712189 1-81
+src/persist/storage.ts
+  s_4576ba6009af55::t_710233a5fcc457 1-62
+src/render/grid2d.ts
+  s_4576ba6009af55::t_2db7256de77da9 1-108
+src/render/poster.ts
+  s_4576ba6009af55::t_3ad556bd4147d6 1-93
+src/render/stage3d.ts
+  s_4576ba6009af55::t_f7053bd5cd1272 1-96
+src/state/store.ts
+  s_4576ba6009af55::t_330c21fc8c6b33 1-75
+src/styles/main.css
+  s_4576ba6009af55::t_90e96c67b4eb42 1-195
+src/ui/editor.ts
+  s_4576ba6009af55::t_3df1720edfa95a 1-154
+src/ui/paletteSearch.ts
+  s_4576ba6009af55::t_0ab85e2a96b30e 1-48
+src/ui/poster.ts
+  s_4576ba6009af55::t_5bb5749c09a073 1-57
+src/ui/upload.ts
+  s_4576ba6009af55::t_967782bdc12364 1-27
+src/vite-env.d.ts
+  s_4576ba6009af55::t_3155b71e2cccbf 1
+tsconfig.json
+  s_4576ba6009af55::t_08c4e9c8d94330 1-19
+vite.config.ts
+  s_4576ba6009af55::t_a0fd53206809fa 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "0c2750f47c9210b25b5ec2187c13b5093ca23cdf",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
