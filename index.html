@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>拼豆图纸生成器</title>
+</head>
+
+<body>
+  <header>
+    <div class="title-block">
+      <div class="title-row">
+        <h1 id="taskTitle">拼豆图纸</h1>
+        <button id="titleEdit" title="改名">✎</button>
+      </div>
+      <div class="sub" id="subTitle">上传图片 · 生成拼豆图纸</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="uploadBtn">上传图片</button>
+    <button class="btn" id="posterBtn">导出海报</button>
+    <button class="btn" id="flowExpBtn">导出单文件</button>
+    <button class="btn primary" id="edSave">保存</button>
+    <input type="file" id="fileInput" accept="image/*" hidden />
+  </header>
+
+  <main>
+    <aside>
+      <div class="panel-section">
+        <div class="panel-label">板规格</div>
+        <div class="size-grid" id="sizeGrid"></div>
+        <div class="cs-card">
+          <div class="cs-in">
+            <span class="cs-t">自定义</span>
+            <div class="cs-field">
+              <input id="csN" type="number" inputmode="numeric" min="15" max="156" placeholder="边长" />
+              <span class="cs-eq" id="csEcho">×N</span>
+            </div>
+            <button id="csGo" class="btn">生成</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">色板</div>
+        <div class="pal-list" id="palList"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">颜色数量 <span class="r" id="budgetHint"></span></div>
+        <div class="budget-row">
+          <input type="range" id="budgetSlider" min="0" step="1" />
+          <div class="budget-ticks" id="budgetTicks"></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">视图 / 操作</div>
+        <div class="opt-row">
+          <button class="btn view-btn active" data-view="grid">平面</button>
+          <button class="btn view-btn" data-view="stage">3D 豆板</button>
+        </div>
+        <div class="opt-row">
+          <button class="btn" id="mirrorBtn">镜像</button>
+          <button class="btn" id="meltBtn">模拟烫豆</button>
+        </div>
+        <div class="opt-row" id="meltRow" hidden>
+          <input type="range" id="meltSlider" min="0" max="100" value="50" style="flex:1" />
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-label">颜色用量 <span class="r" id="colorHint"></span></div>
+        <div class="pal-list" id="colorList"></div>
+        <button class="pal-more" id="palSearchToggle">全部色号 ▾</button>
+        <div class="pal-search" id="palSearchPanel" hidden>
+          <input id="palSearchInput" placeholder="搜索色号 / 名称 / HEX" />
+          <div class="psw-grid" id="palSearchGrid"></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="stage-wrap">
+      <div id="edBar" hidden>
+        <button data-tool="brush" title="画笔（B）：按住拖动连续绘制">✎ 画笔</button>
+        <button data-tool="fill" title="填充（G）：把相连的同色区域换成当前色">▨ 填充</button>
+        <button data-tool="eraser" title="橡皮（X）：清除格子">⌫ 橡皮</button>
+        <button data-tool="picker" title="取色（I）：吸取当前格颜色">◉ 取色</button>
+        <span class="sep"></span>
+        <span class="sw" id="edCurSw"></span><span class="cd" id="edCurCode"></span>
+        <span class="sep"></span>
+        <button id="edUndo" title="撤销（Ctrl+Z）">撤销</button>
+        <button id="edRedo" title="重做（Ctrl+Shift+Z）">重做</button>
+      </div>
+      <div class="canvas-wrap active" id="view-grid">
+        <canvas id="gridCanvas"></canvas>
+        <div class="canvas-tools">
+          <button class="btn" id="zoomOut" title="缩小">−</button>
+          <button class="btn" id="zoomIn" title="放大">+</button>
+          <button class="btn" id="zoomFit" title="适配窗口">⊡</button>
+        </div>
+      </div>
+      <div class="canvas-wrap" id="view-stage">
+        <canvas id="stageCanvas"></canvas>
+      </div>
+      <div class="src-preview" id="srcPreview" hidden>
+        <div class="panel-label">原图</div>
+        <canvas id="srcCanvas"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay" id="posterOverlay" hidden>
+    <div class="poster-box">
+      <div class="poster-bar">
+        <span>拼豆海报预览</span>
+        <div class="spacer"></div>
+        <button class="btn" id="posterDlPng">下载 PNG</button>
+        <button class="btn primary" id="posterDlPdf">下载 PDF</button>
+        <button class="btn" id="posterClose">关闭</button>
+      </div>
+      <div class="poster-scroll"><img id="posterImg" alt="海报预览" /></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- 存档随文件走：导出的单文件 HTML 把本地存档写在这里，打开时回灌到本地（见 src/persist/saveFile.ts） -->
+  <script id="perlerSaved" type="application/json">null</script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
