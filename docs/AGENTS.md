@@ -63,6 +63,8 @@ scripts/
 2. `src/data/palettes.ts` 由 `scripts/extract-palettes.mjs` 生成，**不要手改**；要加色板重新跑脚本。
 3. three 类型用 `@types/three`；若升级 three 大版本需同步 @types/three。
 4. 3D 视图是「2D 网格挤出成豆板」，不是原型那种手工堆叠 7 层立体雕塑——单张照片推导不出深度（见下）。
+5. **指针手势统一走 Pointer Events**（main.ts 平移/捏合 + editor.ts 绘制）：单指=平移或绘制（编辑工具激活时归编辑器），双指=捏合缩放（会调 editor.cancelDraw 让位），桌面滚轮缩放保留。改画布交互别再回退到 mouse 事件。
+6. **移动端布局在 `main.css` 的 `@media (max-width: 820px)`**：上下结构（画布 flex:1 在上、aside 收成 ≤42vh 底部抽屉）、header 按钮换行、触控目标 ≥36px、输入框 16px 防 iOS 聚焦缩放、toast 抬到抽屉上方。
 
 ## 与原型的功能对照（保留 / 新增 / 暂未搬）
 - ✅ 保留：多视图(平面/3D)、色板切换、规格(含自定义 N)、限色档位、镜像、模拟烫豆、颜色用量列表、进度(高亮/已完成)持久化、自导出单文件、Valorant 视觉、**编辑模式(画笔/填充/橡皮/取色+撤销重做)**、**海报导出(PNG/PDF)**、**全色号搜索选色面板**。

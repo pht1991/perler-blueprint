@@ -206,9 +206,6 @@ $('meltBtn').addEventListener('click', () => {
   $('meltRow').hidden = !on; renderActive();
 });
 $('meltSlider').addEventListener('input', (e) => { store.set({ melt: Number((e.target as HTMLInputElement).value) / 100 }); renderActive(); });
-$('zoomIn').addEventListener('click', () => zoomAt(null, null, 1.25));
-$('zoomOut').addEventListener('click', () => zoomAt(null, null, 1 / 1.25));
-$('zoomFit').addEventListener('click', () => fitGrid());
 
 /** 以画布坐标 (mx,my) 为锚点缩放；null = 以画布中心为锚 */
 function zoomAt(mx: number | null, my: number | null, factor: number) {
@@ -229,7 +226,7 @@ function fitGrid() {
   s.scale = 0; grid.fit(s); grid.render(s);
 }
 
-// 滚轮缩放（以鼠标位置为中心）
+// 滚轮缩放（以鼠标位置为中心，桌面端）
 gridCanvas.addEventListener('wheel', (e) => {
   if (!store.get().blueprint) return;
   e.preventDefault();
@@ -237,24 +234,73 @@ gridCanvas.addEventListener('wheel', (e) => {
   zoomAt(e.clientX - rect.left, e.clientY - rect.top, e.deltaY < 0 ? 1.1 : 1 / 1.1);
 }, { passive: false });
 
-// 拖拽平移：未激活编辑工具时左键拖动，或任意时刻中键拖动
+// ---- 指针手势（Pointer Events 统一鼠标/触摸）：单指平移，双指捏合缩放 ----
+// 与编辑器的分工：编辑工具激活时，单指左键/触摸归编辑器绘制；其余单指 = 平移。
+const pointers = new Map<number, { x: number; y: number }>();
 let panning = false, panX = 0, panY = 0;
-gridCanvas.addEventListener('mousedown', (e) => {
+let pinchDist = 0, pinchMidX = 0, pinchMidY = 0;
+// 双击/双击轻点 = 适配窗口（替代已移除的 ⊡ 按钮）
+let lastTapT = 0, lastTapX = 0, lastTapY = 0;
+
+gridCanvas.addEventListener('pointerdown', (e) => {
   const s = store.get();
   if (!s.blueprint) return;
-  if (e.button === 0 && s.tool) return; // 编辑工具激活时左键归编辑器
-  if (e.button !== 0 && e.button !== 1) return;
-  panning = true; panX = e.clientX; panY = e.clientY;
+  if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 1) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  try { gridCanvas.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+  if (pointers.size === 1) {
+    const now = performance.now();
+    if (!s.tool && now - lastTapT < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 24) {
+      lastTapT = 0; pointers.delete(e.pointerId);
+      fitGrid();
+      e.preventDefault();
+      return;
+    }
+    lastTapT = now; lastTapX = e.clientX; lastTapY = e.clientY;  }
+  if (pointers.size === 2) {
+    // 第二根手指上屏：取消绘制/停止单指平移，进入捏合
+    editor.cancelDraw(); panning = false;
+    const [a, b] = [...pointers.values()];
+    pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
+    pinchMidX = (a.x + b.x) / 2; pinchMidY = (a.y + b.y) / 2;
+  } else if (pointers.size === 1) {
+    const isToolClick = s.tool && (e.pointerType !== 'mouse' || e.button === 0);
+    if (isToolClick) return; // 编辑器接管
+    panning = true; panX = e.clientX; panY = e.clientY;
+  }
   e.preventDefault();
 });
-window.addEventListener('mousemove', (e) => {
-  if (!panning) return;
+gridCanvas.addEventListener('pointermove', (e) => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   const s = store.get();
-  s.ox += e.clientX - panX; s.oy += e.clientY - panY;
-  panX = e.clientX; panY = e.clientY;
-  grid.render(s);
+  if (pointers.size >= 2) {
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    // 捏合缩放（以两指中点为锚）
+    if (pinchDist > 0 && Math.abs(d - pinchDist) > 0.5) {
+      const rect = gridCanvas.getBoundingClientRect();
+      zoomAt(mx - rect.left, my - rect.top, d / pinchDist);
+    }
+    // 双指整体平移
+    const cur = store.get();
+    cur.ox += mx - pinchMidX; cur.oy += my - pinchMidY;
+    pinchDist = d; pinchMidX = mx; pinchMidY = my;
+    grid.render(cur);
+  } else if (panning) {
+    s.ox += e.clientX - panX; s.oy += e.clientY - panY;
+    panX = e.clientX; panY = e.clientY;
+    grid.render(s);
+  }
 });
-window.addEventListener('mouseup', () => { panning = false; });
+const endPointer = (e: PointerEvent) => {
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinchDist = 0;
+  if (pointers.size === 0) panning = false;
+};
+gridCanvas.addEventListener('pointerup', endPointer);
+gridCanvas.addEventListener('pointercancel', endPointer);
 
 // ---- 编辑模式：工具条 + 快捷键 ----
 const TOOLS: Tool[] = ['brush', 'fill', 'eraser', 'picker'];

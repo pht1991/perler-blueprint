@@ -16,6 +16,7 @@ export class Editor {
   private drawing = false;
   private batch: CellChange[] = [];
   private touched = new Set<number>();
+  private activePointer: number | null = null;
 
   /** 每改一格（拖动中实时重绘用） */
   onPaint: (() => void) | null = null;
@@ -26,37 +27,41 @@ export class Editor {
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    canvas.addEventListener('mousedown', (e) => this.onDown(e));
-    window.addEventListener('mousemove', (e) => this.onMove(e));
-    window.addEventListener('mouseup', () => this.onUp());
+    // Pointer Events 统一鼠标/触摸/笔：移动端单指可画（main.ts 里双指捏合会调 cancelDraw 让位）
+    canvas.addEventListener('pointerdown', (e) => this.onDown(e));
+    window.addEventListener('pointermove', (e) => this.onMove(e));
+    window.addEventListener('pointerup', (e) => this.onUp(e));
+    window.addEventListener('pointercancel', (e) => this.onUp(e));
   }
 
   // ---- 坐标换算（含镜像反算：屏幕列 -> 数据列） ----
-  private cellAt(e: MouseEvent): number | null {
+  private cellAt(p: { clientX: number; clientY: number }): number | null {
     const s = store.get();
     const bp = s.blueprint; if (!bp) return null;
     const rect = this.canvas.getBoundingClientRect();
     const cell = s.scale || 6;
-    const col = Math.floor((e.clientX - rect.left - s.ox) / cell);
-    const row = Math.floor((e.clientY - rect.top - s.oy) / cell);
+    const col = Math.floor((p.clientX - rect.left - s.ox) / cell);
+    const row = Math.floor((p.clientY - rect.top - s.oy) / cell);
     if (col < 0 || col >= bp.w || row < 0 || row >= bp.h) return null;
     const dataCol = s.mirror ? bp.w - 1 - col : col;
     return row * bp.w + dataCol;
   }
 
-  private onDown(e: MouseEvent) {
+  private onDown(e: PointerEvent) {
     const s = store.get();
     if (!s.blueprint || !s.tool || !s.editColor && s.tool !== 'eraser' && s.tool !== 'picker') return;
-    if (e.button !== 0) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (this.activePointer !== null) return; // 已在绘制中（防第二根手指误触发）
     const idx = this.cellAt(e); if (idx === null) return;
     this.drawing = true;
+    this.activePointer = e.pointerId;
     this.batch = []; this.touched.clear();
     this.apply(idx);
     this.onPaint?.();
   }
 
-  private onMove(e: MouseEvent) {
-    if (!this.drawing) return;
+  private onMove(e: PointerEvent) {
+    if (!this.drawing || e.pointerId !== this.activePointer) return;
     const s = store.get();
     // 只有画笔/橡皮支持按住拖动；填充、取色按下一次即完成
     if (s.tool !== 'brush' && s.tool !== 'eraser') return;
@@ -65,9 +70,18 @@ export class Editor {
     this.onPaint?.();
   }
 
-  private onUp() {
+  private onUp(e: PointerEvent) {
+    if (!this.drawing || e.pointerId !== this.activePointer) return;
+    this.finish();
+  }
+
+  /** 结束本批绘制（松手或被捏合手势打断） */
+  cancelDraw() { this.finish(); }
+
+  private finish() {
     if (!this.drawing) return;
     this.drawing = false;
+    this.activePointer = null;
     if (this.batch.length) {
       this.undoStack.push(this.batch);
       if (this.undoStack.length > MAX_UNDO) this.undoStack.shift();

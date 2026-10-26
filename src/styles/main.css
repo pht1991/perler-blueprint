@@ -114,8 +114,6 @@ aside {
 .canvas-wrap.active { display: flex; }
 #gridCanvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; touch-action: none; }
 #stageCanvas { width: 100%; height: 100%; display: block; touch-action: none; }
-.canvas-tools { position: absolute; top: 12px; right: 12px; display: grid; gap: 4px; z-index: 5; }
-.canvas-tools .btn { width: 36px; padding: 6px 0; text-align: center; }
 .src-preview { position: absolute; left: 12px; bottom: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px; z-index: 5; }
 .src-preview .panel-label { margin-bottom: 6px; }
 #srcCanvas { display: block; max-width: 160px; border-radius: 4px; }
@@ -127,9 +125,50 @@ aside {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (max-width: 720px) {
-  aside { width: 200px; }
-  .size-grid { grid-template-columns: repeat(2, 1fr); }
+/* ===== 移动端适配（≤820px：上下布局 + 触控优化） ===== */
+@media (max-width: 820px) {
+  /* header：标题一行，按钮一行横向滚动 */
+  header {
+    flex-wrap: wrap; height: auto; min-height: 56px;
+    padding: 8px 12px; row-gap: 8px;
+  }
+  .title-block { flex: 1 1 100%; }
+  header > .spacer { display: none; }
+  header > .btn {
+    flex: 1 0 auto; padding: 9px 12px; font-size: 12px; text-align: center;
+  }
+  /* 触控目标：所有可点元素 ≥36px 高 */
+  .btn { padding: 9px 12px; }
+  #titleEdit { width: 30px; height: 30px; }
+
+  /* main：画布在上（flex:1），面板收成底部抽屉（约 42vh 可滚动） */
+  main { flex-direction: column; }
+  .stage-wrap { order: 1; flex: 1; min-height: 0; }
+  aside {
+    order: 2; width: 100%; max-height: 42vh;
+    border-right: none; border-top: 1px solid var(--line);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 编辑工具条：可换行、贴边 */
+  #edBar {
+    top: 8px; left: 8px; right: 8px; flex-wrap: wrap; padding: 6px;
+  }
+  #edBar button { padding: 9px 12px; }
+  .src-preview { left: 8px; bottom: 8px; }
+  #srcCanvas { max-width: 96px; }
+
+  /* iOS Safari：聚焦输入框不自动放大（<16px 会触发缩放） */
+  #csN, #palSearchInput { font-size: 16px; }
+
+  /* 海报弹层：小屏铺满 */
+  .overlay { padding: 10px; }
+  .poster-box { max-width: 96vw; max-height: 94vh; }
+  #posterImg { max-width: 92vw; max-height: 70vh; }
+  .poster-bar { flex-wrap: wrap; }
+
+  /* toast 抬高，避免被底部抽屉挡住 */
+  .toast { bottom: calc(42vh + 16px); max-width: 92vw; text-align: center; }
 }
 
 /* ===== 滚动条美化（暗色 Valorant 风） ===== */
