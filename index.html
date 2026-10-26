@@ -4,7 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-  <title>拼豆图纸生成器</title>
+  <title>拼豆图纸生成器 — Perler Bead Blueprint Maker</title>
+  <meta name="description" content="上传图片，一键生成拼豆（Perler / Fuse Bead）2D 图纸与 3D 豆板：真实色板量化、限色、镜像、烫豆模拟，支持导出海报 PDF 与随身单文件 HTML。Turn any image into a perler bead pattern." />
+  <link rel="canonical" href="https://perler.phtbyte.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="拼豆图纸生成器 — Perler Bead Blueprint Maker" />
+  <meta property="og:description" content="上传图片 → 量化到真实拼豆色板 → 生成 2D 图纸 + 3D 豆板，可保存为随身单文件 HTML。" />
+  <meta property="og:url" content="https://perler.phtbyte.com/" />
+  <meta name="twitter:card" content="summary" />
 </head>
 
 <body>
@@ -18,6 +25,7 @@
     </div>
     <div class="spacer"></div>
     <button class="btn" id="uploadBtn">上传图片</button>
+    <button class="btn" id="batchBtn">批量导出</button>
     <button class="btn" id="posterBtn">导出海报</button>
     <button class="btn" id="flowExpBtn">导出单文件</button>
     <button class="btn primary" id="edSave">保存</button>
@@ -63,6 +71,7 @@
         <div class="opt-row">
           <button class="btn" id="mirrorBtn">镜像</button>
           <button class="btn" id="meltBtn">模拟烫豆</button>
+          <button class="btn" id="depthBtn" title="3D 视图下按图片明暗把豆板堆成立体分层">立体分层</button>
         </div>
         <div class="opt-row" id="meltRow" hidden>
           <input type="range" id="meltSlider" min="0" max="100" value="50" style="flex:1" />
