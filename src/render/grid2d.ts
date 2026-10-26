@@ -60,7 +60,11 @@ export class GridRenderer {
         const px = s.mirror ? (w - 1 - x) : x;
         const gx = ox + px * cell, gy = oy + y * cell;
 
-        if (s.meltOn) {
+        if (s.pixelView) {
+          // 像素视图：纯色块，无立体感/烫豆装饰，看图检查用
+          ctx.fillStyle = color.hex;
+          ctx.fillRect(gx, gy, cell, cell);
+        } else if (s.meltOn) {
           // 模拟烫豆：珠子融成圆润凸起，带高光
           const cx = gx + cell / 2, cy = gy + cell / 2, r = cell * (0.5 + s.melt * 0.12);
           const grd = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);

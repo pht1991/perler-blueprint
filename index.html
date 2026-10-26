@@ -25,6 +25,7 @@
     </div>
     <div class="spacer"></div>
     <button class="btn" id="uploadBtn">上传图片</button>
+    <button class="btn" id="compareBtn" title="原图与图纸并排对照">对比</button>
     <button class="btn" id="batchBtn">批量导出</button>
     <button class="btn" id="batchShareBtn" title="合集 PDF 走系统分享面板（手机可存文件/发微信），不支持时降级下载">批量分享</button>
     <button class="btn" id="posterBtn">导出海报</button>
@@ -71,6 +72,7 @@
         </div>
         <div class="opt-row">
           <button class="btn" id="mirrorBtn">镜像</button>
+          <button class="btn" id="pixelBtn" title="纯色块平面渲染，方便对照原图检查">像素图</button>
           <button class="btn" id="meltBtn">模拟烫豆</button>
           <button class="btn" id="depthBtn" title="3D 视图下按图片明暗把豆板堆成立体分层">立体分层</button>
         </div>
@@ -117,9 +119,6 @@
         <canvas id="stageCanvas"></canvas>
         <button class="btn" id="topViewBtn" title="镜头移到豆板正上方">俯视</button>
       </div>
-      <div class="canvas-wrap" id="view-stage">
-        <canvas id="stageCanvas"></canvas>
-      </div>
       <div class="src-preview" id="srcPreview" hidden>
         <div class="panel-label">原图</div>
         <canvas id="srcCanvas"></canvas>
@@ -138,6 +137,20 @@
         <button class="btn" id="posterClose">关闭</button>
       </div>
       <div class="poster-scroll"><img id="posterImg" alt="海报预览" /></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="compareOverlay" hidden>
+    <div class="compare-box">
+      <div class="poster-bar">
+        <span>原图对比 <span id="compareHint" class="sub"></span></span>
+        <div class="spacer"></div>
+        <button class="btn" id="compareClose">关闭</button>
+      </div>
+      <div class="compare-scroll">
+        <figure><figcaption>原图</figcaption><canvas id="cmpSrc"></canvas></figure>
+        <figure><figcaption>图纸 <span id="cmpBpLabel"></span></figcaption><canvas id="cmpBp"></canvas></figure>
+      </div>
     </div>
   </div>
 
