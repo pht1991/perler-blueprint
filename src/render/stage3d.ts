@@ -109,6 +109,18 @@ export class StageRenderer {
     if (this.root) { this.scene.remove(this.root); this.disposeGroup(this.root); }
     this.root = s.depth3d ? this.buildLayered(s) : this.buildFlat(s);
     this.scene.add(this.root);
+    this.frame(s);
+  }
+
+  /** 切到 3D 视图时调用：画布刚从 display:none 变可见，重算尺寸并把镜头对准豆板 */
+  refit(s: AppState) {
+    this.resize();
+    if (s.blueprint) this.frame(s);
+  }
+
+  /** 机位：拉到能看全整个豆板 */
+  private frame(s: AppState) {
+    const bp = s.blueprint; if (!bp) return;
     const span = Math.max(bp.w, bp.h);
     this.camera.position.set(0, -span * 1.1, span * (s.depth3d ? 1.6 : 1.35));
     this.camera.lookAt(0, 0, 0);

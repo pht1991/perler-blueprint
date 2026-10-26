@@ -168,6 +168,8 @@ function setView(v: ViewMode) {
   store.set({ view: v });
   $('view-grid').classList.toggle('active', v === 'grid');
   $('view-stage').classList.toggle('active', v === 'stage');
+  // 3D 画布刚从 display:none 变可见：重算尺寸 + 机位，否则找不到图
+  if (v === 'stage' && stage) stage.refit(store.get());
 }
 function renderActive() {
   const s = store.get();
