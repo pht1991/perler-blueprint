@@ -5,13 +5,17 @@ import { SIZES } from '../data/sizes';
 import type { Blueprint, Palette } from '../core/types';
 import { generateFromImage } from './upload';
 import { drawPoster } from '../render/poster';
+import { shareOrDownload, downloadFile } from './share';
 
 export interface BatchHandles {
-  openBtn: HTMLElement;
+  openBtn: HTMLElement;    // 批量导出（下载 PDF + CSV）
+  shareBtn: HTMLElement;   // 批量分享（PDF 走系统分享面板，降级下载）
   getFile: () => File | null;
   getUsed: () => Map<string, number>;
   toast: (msg: string) => void;
 }
+
+interface BatchResult { size: number; blueprint: Blueprint; used: Map<string, number> }
 
 /**
  * 批量导出：一图 → 全部标准规格的图纸合集 PDF + 配色统计 CSV。
@@ -19,38 +23,61 @@ export interface BatchHandles {
  * - 无源文件（打开的存档）：对当前图纸做最近邻重采样到目标规格
  */
 export function setupBatch(h: BatchHandles) {
-  h.openBtn.addEventListener('click', async () => {
+  async function generateAll(): Promise<BatchResult[]> {
     const s = store.get();
-    if (!s.blueprint) { h.toast('先上传图片生成图纸'); return; }
     const palette = PALETTE_BY_ID[s.paletteId];
-    if (!palette) { h.toast('色板异常'); return; }
-    h.toast('批量生成中…');
-
-    try {
-      const results: { size: number; blueprint: Blueprint; used: Map<string, number> }[] = [];
-      for (const spec of SIZES) {
-        const size = spec.w;
-        let bp: Blueprint;
-        let used: Map<string, number>;
-        const file = h.getFile();
-        if (file) {
-          const r = await generateFromImage(file, size, palette, s.maxColors);
-          bp = r.blueprint; used = r.used;
-        } else {
-          bp = rescaleBlueprint(s.blueprint!, size);
-          used = countUsed(bp);
-        }
-        results.push({ size, blueprint: bp, used });
-        // 让出主线程，避免大规格连算卡死 UI
-        await new Promise((r) => setTimeout(r, 0));
+    if (!s.blueprint || !palette) throw new Error('no-blueprint');
+    const results: BatchResult[] = [];
+    for (const spec of SIZES) {
+      const size = spec.w;
+      let bp: Blueprint;
+      let used: Map<string, number>;
+      const file = h.getFile();
+      if (file) {
+        const r = await generateFromImage(file, size, palette, s.maxColors);
+        bp = r.blueprint; used = r.used;
+      } else {
+        bp = rescaleBlueprint(s.blueprint, size);
+        used = countUsed(bp);
       }
+      results.push({ size, blueprint: bp, used });
+      // 让出主线程，避免大规格连算卡死 UI
+      await new Promise((r) => setTimeout(r, 0));
+    }
+    return results;
+  }
 
-      downloadPdf(results, palette, s.title);
-      downloadCsv(results, palette, s.title);
+  h.openBtn.addEventListener('click', async () => {
+    if (!store.get().blueprint) { h.toast('先上传图片生成图纸'); return; }
+    h.toast('批量生成中…');
+    try {
+      const results = await generateAll();
+      const palette = PALETTE_BY_ID[store.get().paletteId]!;
+      const title = store.get().title;
+      downloadFile(resultsToPdfFile(results, palette, title));
+      downloadCsv(results, palette, title);
       h.toast(`已导出 ${results.length} 档规格 PDF + CSV`);
     } catch (e) {
+      if ((e as Error)?.message === 'no-blueprint') return;
       console.error(e);
       h.toast('批量导出失败，看下控制台');
+    }
+  });
+
+  h.shareBtn.addEventListener('click', async () => {
+    if (!store.get().blueprint) { h.toast('先上传图片生成图纸'); return; }
+    h.toast('批量生成中…');
+    try {
+      const results = await generateAll();
+      const palette = PALETTE_BY_ID[store.get().paletteId]!;
+      const title = store.get().title;
+      const file = resultsToPdfFile(results, palette, title);
+      const r = await shareOrDownload(file);
+      if (r === 'shared') h.toast('已调起分享（PDF 可存「文件」/发微信；相册只收图片）');
+      else if (r === 'downloaded') h.toast('当前环境不支持分享，已走下载');
+    } catch (e) {
+      console.error(e);
+      h.toast('批量分享失败，看下控制台');
     }
   });
 }
@@ -74,11 +101,8 @@ function countUsed(bp: Blueprint): Map<string, number> {
   return m;
 }
 
-function downloadPdf(
-  results: { size: number; blueprint: Blueprint; used: Map<string, number> }[],
-  palette: Palette,
-  title: string
-) {
+/** 合集 → 单个 PDF File（每规格一页海报） */
+function resultsToPdfFile(results: BatchResult[], palette: Palette, title: string): File {
   let pdf: jsPDF | null = null;
   for (const r of results) {
     const cv = drawPoster({
@@ -95,14 +119,11 @@ function downloadPdf(
     }
     pdf.addImage(cv.toDataURL('image/png'), 'PNG', 0, 0, cv.width, cv.height);
   }
-  pdf?.save(`【拼豆图纸合集】${title}.pdf`);
+  const blob = pdf!.output('blob');
+  return new File([blob], `【拼豆图纸合集】${title}.pdf`, { type: 'application/pdf' });
 }
 
-function downloadCsv(
-  results: { size: number; blueprint: Blueprint; used: Map<string, number> }[],
-  palette: Palette,
-  title: string
-) {
+function downloadCsv(results: BatchResult[], palette: Palette, title: string) {
   const colorMap = new Map(palette.colors.map((c) => [c.code, c]));
   // 所有规格出现过的色号并集，按合计用量降序
   const total = new Map<string, number>();
@@ -125,9 +146,5 @@ function downloadCsv(
   }
   // BOM：让 Excel 正确识别 UTF-8
   const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `【拼豆配色统计】${title}.csv`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  downloadFile(new File([blob], `【拼豆配色统计】${title}.csv`, { type: 'text/csv' }));
 }

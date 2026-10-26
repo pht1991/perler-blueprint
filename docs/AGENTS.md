@@ -39,6 +39,7 @@ src/
     poster.ts       [POSTER] 导出海报：弹层预览 + 下载 PNG / PDF（依赖 jspdf）
     paletteSearch.ts [ALL-COLORS] 全部色号搜索面板（色号/名称/HEX），点选设为编辑色
     batch.ts        [BATCH] 批量导出：全部标准规格合集 PDF（每规格一页海报）+ 配色统计 CSV（含 BOM）；有源图重新量化，无源图（存档）最近邻重采样
+    share.ts        [SHARE] Web Share 文件分享 + 下载降级：PNG 分享可进相册（iOS「存储图像」），PDF 可存「文件」/发微信；canShare 探测，不支持/file:// 自动回退 a[download]（需 HTTPS）
   render/
     poster.ts      drawPoster()：标题 + 图纸预览 + 色号对照表，返回离屏 canvas
   deps: vite, three, typescript, vite-plugin-singlefile, @types/three, jspdf

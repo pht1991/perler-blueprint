@@ -284,6 +284,7 @@ window.addEventListener('keydown', (e) => {
 // ---- 批量导出 / 海报导出 / 全色号搜索 ----
 setupBatch({
   openBtn: $('batchBtn'),
+  shareBtn: $('batchShareBtn'),
   getFile: () => currentFile,
   getUsed: () => usedMap,
   toast,
@@ -292,10 +293,12 @@ setupPoster({
   openBtn: $('posterBtn'),
   overlay: $('posterOverlay'),
   img: $<HTMLImageElement>('posterImg'),
+  shareBtn: $('posterShare'),
   dlPng: $('posterDlPng'),
   dlPdf: $('posterDlPdf'),
   closeBtn: $('posterClose'),
   getUsed: () => usedMap,
+  toast,
 });
 setupPaletteSearch({
   toggleBtn: $('palSearchToggle'),
