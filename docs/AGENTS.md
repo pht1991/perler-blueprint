@@ -21,13 +21,14 @@ src/
     types.ts        BeadColor / Palette / SizeSpec / Blueprint
     color.ts        rgb<->lab、ΔE76、hex 工具
     rasterize.ts    图片→离屏 canvas 缩放裁切→逐像素 RGB
-    quantize.ts     RGB→最近色板色（lab 距离）+ 可选 Floyd–Steinberg 抖动 + 限色上限
+    quantize.ts     RGB→最近色板色（lab 距离）+ 可选 Floyd–Steinberg 抖动；限色用 k-means 语义聚类（Lab 空间、k-means++、固定种子确定性）
+    depth.ts        [DEPTH-3D] 客户端启发式深度估计：亮度+居中加权+平滑→等频分 7 层，供 3D 立体分层
   data/
     palettes.ts     从原型抽取的真实色板（25 板 / 3759 色）⚠️ 自动生成勿手改
     sizes.ts        板规格 36/52/78/104/156
   render/
     grid2d.ts       2D 图纸 canvas（镜像/烫豆/高亮/已完成标记）
-    stage3d.ts      Three.js 实例化珠子 3D 豆板（OrbitControls）
+    stage3d.ts      Three.js 实例化珠子 3D 豆板（OrbitControls）；[DEPTH-3D] depth3d=true 时按 depth.ts 分层堆叠（只渲染顶珠+侧露珠）
   state/store.ts    轻量可观察状态机（subscribe）
   persist/
     storage.ts      localStorage 兜底(MemStorage) + 进度 + 图纸持久化
@@ -37,6 +38,7 @@ src/
     editor.ts       [EDIT-MODE] 画笔/填充/橡皮/取色 + diff 版撤销重做栈（同批同格合并、batch 上限100）
     poster.ts       [POSTER] 导出海报：弹层预览 + 下载 PNG / PDF（依赖 jspdf）
     paletteSearch.ts [ALL-COLORS] 全部色号搜索面板（色号/名称/HEX），点选设为编辑色
+    batch.ts        [BATCH] 批量导出：全部标准规格合集 PDF（每规格一页海报）+ 配色统计 CSV（含 BOM）；有源图重新量化，无源图（存档）最近邻重采样
   render/
     poster.ts      drawPoster()：标题 + 图纸预览 + 色号对照表，返回离屏 canvas
   deps: vite, three, typescript, vite-plugin-singlefile, @types/three, jspdf
@@ -63,12 +65,11 @@ scripts/
 
 ## 与原型的功能对照（保留 / 新增 / 暂未搬）
 - ✅ 保留：多视图(平面/3D)、色板切换、规格(含自定义 N)、限色档位、镜像、模拟烫豆、颜色用量列表、进度(高亮/已完成)持久化、自导出单文件、Valorant 视觉、**编辑模式(画笔/填充/橡皮/取色+撤销重做)**、**海报导出(PNG/PDF)**、**全色号搜索选色面板**。
-- ✅ 新增：上传图片→自动生成图纸（原型无）。
+- ✅ 新增：上传图片→自动生成图纸（原型无）；**限色 k-means 语义聚类**（Lab 空间聚类主色→映射色板，比按用量截断保留语义结构）；**批量导出**（多规格合集 PDF + 配色统计 CSV）；**3D 立体分层**（depth3d 开关，启发式深度 7 层堆叠，复刻原型雕塑观感）。
 - ❌ 已砍：style-picker 画风提示词库（老板确认不要；它只做「复制提示词回对话重做」，依赖外部 AI，与「上传图→量化成拼豆」核心闭环无关）。
-- ⚠️ 暂未搬：原型特有的 7 层 3D 雕塑坐标（非单图可推导，需单目深度估计）、海报的「保存 PDF 到相册」移动端原生能力（当前用浏览器下载，已满足分享）。
+- ⚠️ 3D 立体的深度是**客户端启发式**（亮度+居中加权），不是 MiDaS 单目深度估计——为保单文件离线可用。要真深度得上 ONNX Runtime（包体+几十 MB）或服务端 API，待拍板。海报的「保存 PDF 到相册」移动端原生能力也未做（浏览器下载已满足分享）。
 
 ## 后续可做的增强（待老板拍板）
-- 加「编辑模式」画笔/填充/橡皮复刻原型。
-- 3D 升级：单目深度估计(MiDaS) 把 2D 挤出变真·立体。
-- 批量导出：一图生成多规格合集、配色统计 CSV。
-- 限色时改用语义聚类(k-means)而非纯按用量截断。
+- 3D 深度升级：MiDaS 真单目深度估计（ONNX Runtime Web 或服务端），替代当前启发式。
+- 立体分层层级可调（当前固定 7 层）+ 层间配色方案。
+- 批量导出加规格勾选 UI（当前固定全 5 档标准规格）。

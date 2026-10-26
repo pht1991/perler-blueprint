@@ -12,6 +12,7 @@ export interface AppState {
   mirror: boolean;
   meltOn: boolean;
   melt: number;            // 0..1
+  depth3d: boolean;        // 3D 分层模式：深度启发式堆叠（false = 平面挤出）
   scale: number;           // 每格像素（CSS px）
   ox: number; oy: number;  // 平移
   highlight: string | null;
@@ -34,6 +35,7 @@ class Store {
     mirror: false,
     meltOn: false,
     melt: 0.5,
+    depth3d: false,
     scale: 0,
     ox: 0, oy: 0,
     highlight: null,

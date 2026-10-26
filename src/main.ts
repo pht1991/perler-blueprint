@@ -11,6 +11,7 @@ import { generateFromImage } from './ui/upload';
 import { Editor } from './ui/editor';
 import { setupPoster } from './ui/poster';
 import { setupPaletteSearch } from './ui/paletteSearch';
+import { setupBatch } from './ui/batch';
 import type { Palette } from './core/types';
 import type { Tool } from './state/store';
 
@@ -193,6 +194,13 @@ document.querySelectorAll('.view-btn').forEach((b) => b.addEventListener('click'
   b.classList.add('active'); setView(b.getAttribute('data-view') as ViewMode);
 }));
 $('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); renderActive(); });
+$('depthBtn').addEventListener('click', () => {
+  const on = !store.get().depth3d;
+  store.set({ depth3d: on });
+  $('depthBtn').classList.toggle('active', on);
+  renderActive();
+  if (on && store.get().view !== 'stage') toast('立体分层在「3D 豆板」视图生效');
+});
 $('meltBtn').addEventListener('click', () => {
   const on = !store.get().meltOn; store.set({ meltOn: on });
   $('meltRow').hidden = !on; renderActive();
@@ -273,7 +281,13 @@ window.addEventListener('keydown', (e) => {
   if (t && store.get().blueprint) setTool(t);
 });
 
-// ---- 海报导出 / 全色号搜索 ----
+// ---- 批量导出 / 海报导出 / 全色号搜索 ----
+setupBatch({
+  openBtn: $('batchBtn'),
+  getFile: () => currentFile,
+  getUsed: () => usedMap,
+  toast,
+});
 setupPoster({
   openBtn: $('posterBtn'),
   overlay: $('posterOverlay'),
