@@ -79,8 +79,14 @@
         </div>
       </div>
 
+      <div class="panel-section" id="islandSec" hidden>
+        <div class="panel-label">孤立像素 <span class="r" id="islandHint"></span></div>
+        <button class="btn" id="islandAllBtn">一键清除散珠</button>
+        <div class="island-note">四周无相邻珠子的单颗珠，拼的时候要单独固定，建议清除</div>
+      </div>
+
       <div class="panel-section">
-        <div class="panel-label">颜色用量 <span class="r" id="colorHint"></span></div>
+        <div class="panel-label">颜色用量 <span class="r" id="colorHint"></span><button class="mini-btn" id="doneAllBtn" title="全部标记已拼 / 全部清除">全✓</button></div>
         <div class="pal-list" id="colorList"></div>
         <button class="pal-more" id="palSearchToggle">全部色号 ▾</button>
         <div class="pal-search" id="palSearchPanel" hidden>
@@ -101,9 +107,15 @@
         <span class="sep"></span>
         <button id="edUndo" title="撤销（Ctrl+Z）">撤销</button>
         <button id="edRedo" title="重做（Ctrl+Shift+Z）">重做</button>
+        <button id="edRestore" title="放弃全部编辑，回到生成时的图纸">恢复初始</button>
       </div>
       <div class="canvas-wrap active" id="view-grid">
         <canvas id="gridCanvas"></canvas>
+        <div id="zoomPct">100%</div>
+      </div>
+      <div class="canvas-wrap" id="view-stage">
+        <canvas id="stageCanvas"></canvas>
+        <button class="btn" id="topViewBtn" title="镜头移到豆板正上方">俯视</button>
       </div>
       <div class="canvas-wrap" id="view-stage">
         <canvas id="stageCanvas"></canvas>

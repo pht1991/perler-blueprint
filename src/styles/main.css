@@ -230,5 +230,23 @@ aside::-webkit-scrollbar-track, .pal-list::-webkit-scrollbar-track, .pal-search:
 .poster-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .poster-bar .spacer { flex: 1; }
 .poster-bar > span { font-family: var(--font-d); font-weight: 700; letter-spacing: .08em; color: var(--txt2); }
-.poster-scroll { overflow: auto; padding: 12px; background: #2a2a2a; }
+.poster-scroll { overflow: auto; padding: 12px; background: #2a2a2a; display: flex; justify-content: center; }
 #posterImg { display: block; max-width: 64vw; max-height: 74vh; height: auto; border-radius: 4px; }
+
+/* ===== 画布角标 / 小按钮 ===== */
+#zoomPct {
+  position: absolute; right: 12px; bottom: 12px; z-index: 5;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+  font-family: var(--font-d); font-size: 12px; font-weight: 600; color: var(--txt2);
+  padding: 4px 8px; letter-spacing: .06em; pointer-events: none;
+}
+#zoomPct[hidden] { display: none; }
+#topViewBtn { position: absolute; top: 12px; right: 12px; z-index: 5; }
+.mini-btn {
+  margin-left: auto; appearance: none; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--txt2);
+  font-family: var(--font-d); font-size: 11px; font-weight: 600; letter-spacing: .06em;
+  padding: 2px 8px; border-radius: 3px; transition: all .12s;
+}
+.mini-btn:hover { border-color: var(--teal); color: var(--teal); }
+.island-note { font-size: 10.5px; color: var(--txt3); margin-top: 8px; line-height: 1.5; }

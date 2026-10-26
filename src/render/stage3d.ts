@@ -118,10 +118,21 @@ export class StageRenderer {
     if (s.blueprint) this.frame(s);
   }
 
+  /** 镜头移到豆板正上方（俯视） */
+  topView() {
+    const span = this.lastSpan; if (!span) return;
+    this.camera.position.set(0, -span * 0.02, span * 1.8);
+    this.camera.lookAt(0, 0, 0);
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
+  }
+  private lastSpan = 0;
+
   /** 机位：拉到能看全整个豆板 */
   private frame(s: AppState) {
     const bp = s.blueprint; if (!bp) return;
     const span = Math.max(bp.w, bp.h);
+    this.lastSpan = span;
     this.camera.position.set(0, -span * 1.1, span * (s.depth3d ? 1.6 : 1.35));
     this.camera.lookAt(0, 0, 0);
     this.controls.target.set(0, 0, 0);

@@ -78,6 +78,13 @@ export class Editor {
   /** 结束本批绘制（松手或被捏合手势打断） */
   cancelDraw() { this.finish(); }
 
+  /** 清空撤销/重做栈（恢复初始图纸后调用，避免撤销回到已废弃状态） */
+  reset() {
+    this.undoStack = []; this.redoStack = [];
+    this.drawing = false; this.activePointer = null;
+    this.batch = []; this.touched.clear();
+  }
+
   private finish() {
     if (!this.drawing) return;
     this.drawing = false;

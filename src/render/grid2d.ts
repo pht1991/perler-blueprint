@@ -8,6 +8,8 @@ export class GridRenderer {
   private dpr = Math.max(1, window.devicePixelRatio || 1);
   private colorMap = new Map<string, BeadColor>();
   private bg = '#F5F2EA';
+  /** 最近一次 fit 得到的每格像素，用于缩放百分比基准 */
+  fitScale = 6;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -28,6 +30,7 @@ export class GridRenderer {
     const pad = 12;
     const cell = Math.floor(Math.min((w - pad * 2) / bp.w, (h - pad * 2) / bp.h));
     s.scale = Math.max(1, cell);
+    this.fitScale = s.scale;
     s.ox = Math.round((w - cell * bp.w) / 2);
     s.oy = Math.round((h - cell * bp.h) / 2);
   }

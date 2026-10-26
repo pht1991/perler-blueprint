@@ -28,6 +28,7 @@ const fileInput = $<HTMLInputElement>('fileInput');
 
 let currentFile: File | null = null;
 let usedMap = new Map<string, number>();
+let baseCodes: (string | null)[] | null = null; // 生成底稿：供「恢复初始图纸」
 const pal = (): Palette => PALETTE_BY_ID[store.get().paletteId] ?? PALETTES[0];
 
 function toast(msg: string) {
@@ -47,6 +48,7 @@ editor.onCommit = () => {
   usedMap = countUsed(store.get());
   buildColorList();
   renderActive();
+  syncIsland();
 };
 editor.onToolChange = () => syncToolUI();
 
@@ -134,6 +136,61 @@ function toggleDone(code: string) {
   saveProgress(store.get()); buildColorList();
 }
 
+// ---- 孤立像素检测 / 一键清除 ----
+/** 四邻域全空的散珠索引（单颗珠实操要单独固定，建议清掉） */
+function findIsolated(): number[] {
+  const bp = store.get().blueprint; if (!bp) return [];
+  const { w, h, codes } = bp;
+  const out: number[] = [];
+  const at = (x: number, y: number) => (x < 0 || x >= w || y < 0 || y >= h ? null : codes[y * w + x] ?? null);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (codes[i] === null || codes[i] === undefined) continue;
+      if (at(x - 1, y) === null && at(x + 1, y) === null && at(x, y - 1) === null && at(x, y + 1) === null) out.push(i);
+    }
+  }
+  return out;
+}
+function syncIsland() {
+  const n = findIsolated().length;
+  $('islandSec').hidden = n === 0;
+  $('islandHint').textContent = `${n} 颗`;
+}
+$('islandAllBtn').addEventListener('click', () => {
+  const s = store.get(); if (!s.blueprint) return;
+  const idx = findIsolated(); if (!idx.length) { syncIsland(); return; }
+  for (const i of idx) s.blueprint.codes[i] = null;
+  usedMap = countUsed(s);
+  editor.reset();
+  saveBlueprint(s); saveProgress(s);
+  renderActive(); buildColorList(); syncIsland();
+  toast(`已清除 ${idx.length} 颗孤立散珠`);
+});
+
+// ---- 恢复初始图纸 ----
+$('edRestore').addEventListener('click', () => {
+  const s = store.get();
+  if (!s.blueprint || !baseCodes) return;
+  if (!confirm('放弃全部编辑，恢复到生成时的图纸？')) return;
+  s.blueprint.codes = baseCodes.slice();
+  usedMap = countUsed(s);
+  editor.reset();
+  saveBlueprint(s); saveProgress(s);
+  renderActive(); buildColorList(); syncIsland(); syncToolUI();
+  toast('已恢复初始图纸');
+});
+
+// ---- 用量清单：全部标记已拼 / 清除 ----
+$('doneAllBtn').addEventListener('click', () => {
+  const s = store.get(); if (!s.blueprint) return;
+  const all = new Set(s.blueprint.codes.filter((c): c is string => !!c));
+  const allDone = all.size > 0 && s.done.size >= all.size && [...all].every((c) => s.done.has(c));
+  store.set({ done: allDone ? new Set<string>() : all });
+  toast(allDone ? '已清除全部完成标记' : '已全部标记为已拼');
+  saveProgress(store.get()); buildColorList();
+});
+
 // ---- generation ----
 async function onUpload(file: File) {
   currentFile = file;
@@ -149,6 +206,8 @@ async function regen() {
   const res = await generateFromImage(currentFile, s.size, pal(), s.maxColors);
   usedMap = res.used;
   store.set({ blueprint: res.blueprint });
+  baseCodes = res.blueprint.codes.slice();
+  editor.reset();
   saveBlueprint(s);
   // 源图预览
   const sp = $('srcPreview'), sc = $<HTMLCanvasElement>('srcCanvas');
@@ -161,9 +220,10 @@ async function regen() {
   renderActive();
   buildColorList();
   syncToolUI();
+  syncIsland();
 }
 
-// ---- view / effects ----
+// ---- 视图 / 效果 ----
 function setView(v: ViewMode) {
   store.set({ view: v });
   $('view-grid').classList.toggle('active', v === 'grid');
@@ -171,12 +231,23 @@ function setView(v: ViewMode) {
   // 3D 画布刚从 display:none 变可见：重算尺寸 + 机位，否则找不到图
   if (v === 'stage' && stage) stage.refit(store.get());
 }
+$('topViewBtn').addEventListener('click', () => stage?.topView());
+
+// ---- 缩放百分比（相对适配窗口的倍数） ----
+function updateZoomPct() {
+  const s = store.get();
+  const el = $('zoomPct');
+  if (!s.blueprint) { el.hidden = true; return; }
+  const base = grid.fitScale || s.scale || 1;
+  el.textContent = Math.round(((s.scale || base) / base) * 100) + '%';
+}
 function renderActive() {
   const s = store.get();
   grid.setPalette(pal());
   if (s.scale === 0) grid.fit(s);
   grid.render(s);
   if (stage) { stage.setPalette(pal()); if (s.blueprint) stage.setBlueprint(s); }
+  updateZoomPct();
 }
 
 // ---- events ----
@@ -222,10 +293,12 @@ function zoomAt(mx: number | null, my: number | null, factor: number) {
   s.ox = cx - (cx - s.ox) * r;
   s.oy = cy - (cy - s.oy) * r;
   grid.render(s);
+  updateZoomPct();
 }
 function fitGrid() {
   const s = store.get(); if (!s.blueprint) return;
   s.scale = 0; grid.fit(s); grid.render(s);
+  updateZoomPct();
 }
 
 // 滚轮缩放（以鼠标位置为中心，桌面端）
@@ -392,7 +465,7 @@ store.subscribe((s, changed) => {
   const s = store.get();
   loadProgress(s);
   loadBlueprint(s);
-  if (s.blueprint) { usedMap = countUsed(s); buildColorList(); syncToolUI(); }
+  if (s.blueprint) { baseCodes = s.blueprint.codes.slice(); usedMap = countUsed(s); buildColorList(); syncToolUI(); syncIsland(); }
 })();
 
 function countUsed(s: AppState): Map<string, number> {
