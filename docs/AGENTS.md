@@ -28,7 +28,7 @@ src/
     sizes.ts        板规格 36/52/78/104/156
   render/
     grid2d.ts       2D 图纸 canvas（镜像/烫豆/高亮/已完成标记）
-    stage3d.ts      Three.js 实例化珠子 3D 豆板（OrbitControls）；[DEPTH-3D] depth3d=true 时按 depth.ts 分层堆叠（只渲染顶珠+侧露珠）
+    stage3d.ts      Three.js 3D 豆板（OrbitControls）：圆珠=圆柱+顶面环形假孔贴图（实例色染色），钉板底座=深蓝板+空位凸点（InstancedMesh）；[DEPTH-3D] depth3d=true 时按 depth.ts 分层堆叠（只渲染顶珠+侧露珠）。共享几何/材质在构造器创建，重建场景只释放新建部分
   state/store.ts    轻量可观察状态机（subscribe）
   persist/
     storage.ts      localStorage 兜底(MemStorage) + 进度 + 图纸持久化
