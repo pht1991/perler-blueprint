@@ -1,0 +1,35 @@
+docs/AGENTS.md
+  s_4576ba6009af55::t_8448ffb62ae241 69-70
+src/persist/saveFile.ts
+  s_4576ba6009af55::t_6e379014a23881 2
+  s_4576ba6009af55::t_dc3beefc1a59a6 37-44,55-57,59
+  s_4576ba6009af55::t_3bed5fb2c6b477 75-78,83,86,88
+src/styles/main.css
+  s_4576ba6009af55::t_d730c47d2729d3 91-93
+index.html
+  s_4576ba6009af55::t_97388f1d836578 109
+src/main.ts
+  s_4576ba6009af55::t_4efe825e819ab8 113-114
+  s_4576ba6009af55::t_8c9a8a380fbb6e 67-70
+  s_4576ba6009af55::t_c27d4c3397417b 538,540-546
+  s_4576ba6009af55::t_09d81b24f144a1 431-436,438-446
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "e3a74dd4000b39291a02ca7ae190181c64c99d74",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
