@@ -1,0 +1,26 @@
+src/main.ts
+  s_4576ba6009af55::t_716d3e59e49fa8 108-109
+  s_4576ba6009af55::t_832d9d31c55ee4 138-139,142-144
+src/render/stage3d.ts
+  s_4576ba6009af55::t_31210f7e8e4fb5 163-164
+  s_4576ba6009af55::t_dd9d51605579c6 239-240
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "d29a1f3660da52f14f4f5ff55578d9557ff86b71",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
