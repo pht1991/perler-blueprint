@@ -1,0 +1,31 @@
+src/styles/main.css
+  s_4576ba6009af55::t_a2faef6e59e553 128-171
+src/ui/editor.ts
+  s_4576ba6009af55::t_661c8725bace0e 19
+  s_4576ba6009af55::t_b83da0fb613f81 30-34,38,43-44,50,53-54,57,63-64,73-81,84
+src/main.ts
+  s_4576ba6009af55::t_d94bbc8eeace8b 229,237-239,241,244-245,248-250,260-270,273-275,277-295,297-303
+  s_4576ba6009af55::t_22f08ff4c02e01 242-243,251-258
+  s_4576ba6009af55::t_74b17ef878906e 259
+docs/AGENTS.md
+  s_4576ba6009af55::t_fc06f2922c2462 66-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "674bb879c6bc9348b2ddb1dfc081552d4e26f3a7",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
