@@ -1,4 +1,5 @@
 import type { AppState } from '../state/store';
+import { store } from '../state/store';
 
 // [SAVE-FILE] 存档随文件走
 // 「保存」把本任务的全部本地存档（进度、图纸）写进一份新的单文件 HTML 交给用户。
@@ -33,6 +34,14 @@ export function restoreFromEmbedded(): void {
   let snap: any = null;
   try { snap = JSON.parse(document.getElementById('perlerSaved')?.textContent || 'null'); } catch (e) { return; }
   if (!snap || !snap.savedAt || !snap.items) return;
+  // 标题必须先还原：blueprintKey/progressKey/srcImgKey 全部按标题查，
+  // 不还原的话 loadBlueprint 会拿默认标题「拼豆图纸」去查档 → 键位错位 → 白屏（已踩坑）
+  const t = decodeURIComponent(taskKeyFromSnap(snap) || '');
+  if (t) {
+    store.set({ title: t });
+    const h1 = document.getElementById('taskTitle');
+    if (h1) h1.textContent = t;
+  }
   const stampKey = SAVE_STAMP_KEY(taskKeyFromSnap(snap));
   try {
     if (Number(localStorage.getItem(stampKey) || 0) >= snap.savedAt) return;
@@ -43,10 +52,11 @@ export function restoreFromEmbedded(): void {
 }
 
 function taskKeyFromSnap(snap: any): string {
-  // 存档键里含标题编码，取第一个 perler- 键推断
-  const k = Object.keys(snap.items).find((x) => x.startsWith('perler-'));
+  // 存档键里含标题编码，优先取 blueprint 键推断（srcimg/progress 等键次之）
+  const keys = Object.keys(snap.items);
+  const k = keys.find((x) => x.startsWith('perler-blueprint-')) || keys.find((x) => x.startsWith('perler-'));
   if (!k) return '';
-  const m = k.match(/perler-(?:progress|blueprint)-(.+?)(?:-|$)/);
+  const m = k.match(/perler-(?:blueprint|progress|srcimg)-(.+?)(?:-|$)/);
   return m ? m[1] : '';
 }
 function saveFileKeysFromSnap(snap: any): string[] { return Object.keys(snap.items); }
@@ -62,17 +72,20 @@ export async function saveFileExport(s: AppState): Promise<'ok' | 'shared' | 'ca
   } catch (e) { /* ignore */ }
   const json = JSON.stringify({ savedAt, items }).replace(/</g, '\\u003c');
 
-  // DOM 方式写入存档节点（绝不能用正则替换 HTML 字符串，会误伤 bundle 源码，见文件头注释）
-  let node = document.getElementById('perlerSaved') as HTMLScriptElement | null;
+  // 克隆整棵树操作（不污染活页面）：更新存档节点 + 剥离外部注入脚本（CDN beacon 等，file:// 打开只会报错）
+  // 绝不能用正则替换 HTML 字符串，会误伤 bundle 源码，见文件头注释
+  const root = document.documentElement.cloneNode(true) as HTMLElement;
+  let node = root.querySelector('#perlerSaved') as HTMLScriptElement | null;
   if (!node) {
     node = document.createElement('script');
     node.id = 'perlerSaved';
     node.type = 'application/json';
-    (document.body || document.documentElement).appendChild(node);
+    (root.querySelector('body') || root).appendChild(node);
   }
   node.textContent = json;
+  root.querySelectorAll('script[src]').forEach((x) => x.remove());
   // outerHTML 不含 doctype，补上避免 quirks 模式
-  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const html = '<!DOCTYPE html>\n' + root.outerHTML;
 
   const d = new Date(), p = (n: number) => String(n).padStart(2, '0');
   const stamp = `${d.getMonth() + 1}月${d.getDate()}日_${p(d.getHours())}点${p(d.getMinutes())}分${p(d.getSeconds())}秒`;

@@ -88,6 +88,9 @@ aside {
 }
 .color-item.hl { border-color: var(--teal); }
 .color-item.done { opacity: .55; }
+.color-item.ed .sw { outline: 2px solid var(--teal); outline-offset: 1px; }
+.ed-hint { color: var(--txt3); font-size: 12px; white-space: nowrap; }
+@media (max-width: 820px) { .ed-hint { display: none; } }
 .color-item .sw { width: 18px; height: 18px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .3); flex: none; }
 .color-item .cd { font-family: var(--font-d); font-weight: 700; font-size: 13px; }
 .color-item .nm { font-size: 11px; color: var(--txt2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

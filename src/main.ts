@@ -64,6 +64,10 @@ function syncToolUI() {
   const c = s.editColor ? pm?.colors.find((x) => x.code === s.editColor) : null;
   ($('edCurSw') as HTMLElement).style.background = c?.hex ?? 'transparent';
   $('edCurCode').textContent = s.editColor ?? '';
+  // 工具操作提示：没激活工具时教怎么开始，激活后教怎么用
+  $('edHint').textContent = !s.tool
+    ? (s.editColor ? '点工具开涂' : '点画笔即可开始（自动选色）')
+    : TOOL_HINT[s.tool];
 }
 
 // ---- UI build ----
@@ -106,7 +110,8 @@ function buildColorList() {
   for (const [code, count] of arr) {
     const c = pm?.colors.find((x) => x.code === code);
     const el = document.createElement('div');
-    el.className = 'color-item' + (store.get().highlight === code ? ' hl' : '') + (store.get().done.has(code) ? ' done' : '');
+    el.className = 'color-item' + (store.get().highlight === code ? ' hl' : '') + (store.get().done.has(code) ? ' done' : '') + (store.get().editColor === code ? ' ed' : '');
+    el.title = '点色块=选为编辑色 · 点行=高亮追踪 · ✓=标记已拼';
     const hex = c?.hex ?? '#ccc';
     el.innerHTML = `<span class="sw" style="background:${hex}"></span>
       <span class="cd">${code}</span><span class="nm">${c?.name ?? ''}</span>
@@ -423,8 +428,22 @@ gridCanvas.addEventListener('pointercancel', endPointer);
 const TOOLS: Tool[] = ['brush', 'fill', 'eraser', 'picker'];
 const TOOL_KEYS: Record<string, Tool> = { b: 'brush', g: 'fill', x: 'eraser', i: 'picker' };
 const NEEDS_COLOR = (t: Tool) => t === 'brush' || t === 'fill';
+const TOOL_HINT: Record<Tool, string> = {
+  brush: '按住涂抹上色 · 换色点右侧色块',
+  fill: '点一下 = 相连同色区域整体换色',
+  eraser: '点一下或按住抹掉珠子',
+  picker: '点图纸上的珠子吸取颜色（吸完自动切回画笔）',
+};
 function setTool(t: Tool) {
-  if (NEEDS_COLOR(t) && !store.get().editColor) { toast('先在「颜色用量」里点色块选个颜色'); return; }
+  const s = store.get();
+  if (NEEDS_COLOR(t) && !s.editColor) {
+    // 没选色不再卡死流程：自动选用量最多的色，用户可随时点色块换
+    const top = [...usedMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+    if (!top) { toast('图纸是空的，没东西可编辑'); return; }
+    store.set({ editColor: top, highlight: top });
+    buildColorList();
+    toast(`已自动选 ${top}（用量最多）· 换色点右侧色块`);
+  }
   store.set({ tool: store.get().tool === t ? null : t });
   syncToolUI();
 }
@@ -516,9 +535,15 @@ store.subscribe((s, changed) => {
 // ---- 打开已保存文件时恢复图纸 ----
 (function restoreBlueprint() {
   const s = store.get();
-  loadProgress(s);
+  loadProgress(s); // 先跑一次兜底空值
   loadBlueprint(s);
-  if (s.blueprint) { baseCodes = s.blueprint.codes.slice(); usedMap = countUsed(s); buildColorList(); syncToolUI(); syncIsland(); }
+  if (s.blueprint) {
+    // 进度键含规格/色板：先从图纸对齐参数再读一次，否则键位错位读不到进度
+    s.size = s.blueprint.w;
+    s.paletteId = s.blueprint.paletteId;
+    loadProgress(s);
+    baseCodes = s.blueprint.codes.slice(); usedMap = countUsed(s); buildColorList(); syncToolUI(); syncIsland();
+  }
   restoreSrcImg(); // 异步：还原源图预览 + 重建 currentFile
 })();
 

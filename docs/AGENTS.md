@@ -66,7 +66,8 @@ scripts/
 4. 3D 视图是「2D 网格挤出成豆板」，不是原型那种手工堆叠 7 层立体雕塑——单张照片推导不出深度（见下）。
 5. **指针手势统一走 Pointer Events**（main.ts 平移/捏合 + editor.ts 绘制）：单指=平移或绘制（编辑工具激活时归编辑器），双指=捏合缩放（会调 editor.cancelDraw 让位），桌面滚轮缩放保留。改画布交互别再回退到 mouse 事件。
 6. **移动端布局在 `main.css` 的 `@media (max-width: 820px)`**：上下结构（画布 flex:1 在上、aside 收成 ≤42vh 底部抽屉）、header 按钮换行、触控目标 ≥36px、输入框 16px 防 iOS 聚焦缩放、toast 抬到抽屉上方。
-7. **单文件导出禁止用正则替换整页 HTML 字符串**（saveFile.ts，已踩坑出过线上事故）：bundle 压缩源码里就含有 `<script id="perlerSaved">` 模板字符串，正则会先匹配到它并把大段初始化代码替换成 JSON，导出文件直接语法报错白屏。必须走 DOM：改写真实 `#perlerSaved` 节点的 textContent 后再序列化 `documentElement.outerHTML`，并手动补 `<!DOCTYPE html>` 前缀（outerHTML 不含 doctype，缺了会进 quirks 模式）。
+7. **单文件导出禁止用正则替换整页 HTML 字符串**（saveFile.ts，已踩坑出过线上事故）：bundle 压缩源码里就含有 `<script id="perlerSaved">` 模板字符串，正则会先匹配到它并把大段初始化代码替换成 JSON，导出文件直接语法报错白屏。必须走 DOM（cloneNode 后改写 `#perlerSaved` 节点 textContent，顺手剥离 `script[src]` 外部注入脚本），并手动补 `<!DOCTYPE html>` 前缀（outerHTML 不含 doctype，缺了会进 quirks 模式）。
+8. **所有存档键（blueprint/progress/srcimg）都按标题编码**：打开导出文件时 restoreFromEmbedded 必须先从存档键解出标题回写 store，否则后续查询用默认标题「拼豆图纸」全部落空（白屏）；读进度前还要用 blueprint 的 w/paletteId 对齐 store.size/paletteId（进度键含这两项）。
 
 ## 与原型的功能对照（保留 / 新增 / 暂未搬）
 - ✅ 保留：多视图(平面/3D)、色板切换、规格(含自定义 N)、限色档位、镜像、模拟烫豆、颜色用量列表、进度(高亮/已完成)持久化、自导出单文件、Valorant 视觉、**编辑模式(画笔/填充/橡皮/取色+撤销重做)**、**海报导出(PNG/PDF)**、**全色号搜索选色面板**。
