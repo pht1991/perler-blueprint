@@ -3,7 +3,7 @@ import { PALETTES, PALETTE_BY_ID } from './data/palettes';
 import { SIZES, DEFAULT_SIZE } from './data/sizes';
 import { store } from './state/store';
 import type { AppState, ViewMode } from './state/store';
-import { installMemStorageFallback, saveProgress, loadProgress, saveBlueprint, loadBlueprint } from './persist/storage';
+import { installMemStorageFallback, saveProgress, loadProgress, saveBlueprint, loadBlueprint, saveSrcImg, loadSrcImg } from './persist/storage';
 import { restoreFromEmbedded, saveFileExport } from './persist/saveFile';
 import { GridRenderer } from './render/grid2d';
 import { StageRenderer } from './render/stage3d';
@@ -209,18 +209,53 @@ async function regen() {
   baseCodes = res.blueprint.codes.slice();
   editor.reset();
   saveBlueprint(s);
-  // 源图预览
-  const sp = $('srcPreview'), sc = $<HTMLCanvasElement>('srcCanvas');
-  sp.hidden = false;
-  const img = new Image(); img.onload = () => {
-    const max = 160; const r = Math.min(max / img.width, max / img.height, 1);
-    sc.width = img.width * r; sc.height = img.height * r;
-    sc.getContext('2d')!.drawImage(img, 0, 0, sc.width, sc.height);
-  }; img.src = URL.createObjectURL(currentFile);
+  // 源图预览 + 缩略图入档（导出单文件时随档带走）
+  const dataUrl = await fileToThumbDataUrl(currentFile);
+  saveSrcImg(s, dataUrl);
+  hydrateSrcPreview(dataUrl);
   renderActive();
   buildColorList();
   syncToolUI();
   syncIsland();
+}
+
+/** 源图压成 ≤512px JPEG dataURL（预览展示 + 持久化两用） */
+async function fileToThumbDataUrl(file: File): Promise<string> {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    await new Promise<void>((ok, err) => { img.onload = () => ok(); img.onerror = () => err(new Error('img')); img.src = url; });
+    const max = 512, r = Math.min(max / img.width, max / img.height, 1);
+    const cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.round(img.width * r));
+    cv.height = Math.max(1, Math.round(img.height * r));
+    cv.getContext('2d')!.drawImage(img, 0, 0, cv.width, cv.height);
+    return cv.toDataURL('image/jpeg', 0.82);
+  } finally { URL.revokeObjectURL(url); }
+}
+
+/** 用 dataURL 渲染左下角源图预览 */
+function hydrateSrcPreview(dataUrl: string) {
+  const sp = $('srcPreview'), sc = $<HTMLCanvasElement>('srcCanvas');
+  const img = new Image();
+  img.onload = () => {
+    const max = 160, r = Math.min(max / img.width, max / img.height, 1);
+    sc.width = img.width * r; sc.height = img.height * r;
+    sc.getContext('2d')!.drawImage(img, 0, 0, sc.width, sc.height);
+  };
+  img.src = dataUrl;
+  sp.hidden = false;
+}
+
+/** 打开存档时还原源图：预览显示 + 重建 File（让「改规格/色板重新生成」和批量导出重新量化可用） */
+async function restoreSrcImg() {
+  const dataUrl = loadSrcImg(store.get());
+  if (!dataUrl) return;
+  hydrateSrcPreview(dataUrl);
+  try {
+    const blob = await (await fetch(dataUrl)).blob();
+    currentFile = new File([blob], `${store.get().title || '源图'}.jpg`, { type: blob.type || 'image/jpeg' });
+  } catch { /* 重建失败只影响重新生成，预览已恢复 */ }
 }
 
 // ---- 视图 / 效果 ----
@@ -466,6 +501,7 @@ store.subscribe((s, changed) => {
   loadProgress(s);
   loadBlueprint(s);
   if (s.blueprint) { baseCodes = s.blueprint.codes.slice(); usedMap = countUsed(s); buildColorList(); syncToolUI(); syncIsland(); }
+  restoreSrcImg(); // 异步：还原源图预览 + 重建 currentFile
 })();
 
 function countUsed(s: AppState): Map<string, number> {

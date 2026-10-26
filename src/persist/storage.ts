@@ -60,3 +60,14 @@ export function loadBlueprint(s: AppState): void {
     s.blueprint = raw ? JSON.parse(raw) : null;
   } catch (e) { s.blueprint = null; }
 }
+
+/** 源图缩略图（downscale 后的 dataURL）随任务入档：导出单文件才能把「上传的原图」带走，重开后预览和重新生成都靠它 */
+export function srcImgKey(s: AppState): string { return `perler-srcimg-${enc(s.title)}`; }
+
+export function saveSrcImg(s: AppState, dataUrl: string): void {
+  try { localStorage.setItem(srcImgKey(s), dataUrl); } catch (e) { /* 超限就不存，预览退化为无 */ }
+}
+
+export function loadSrcImg(s: AppState): string | null {
+  try { return localStorage.getItem(srcImgKey(s)); } catch (e) { return null; }
+}
