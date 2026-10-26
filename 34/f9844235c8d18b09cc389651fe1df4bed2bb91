@@ -1,0 +1,25 @@
+src/persist/saveFile.ts
+  s_4576ba6009af55::t_2db0490dfe911f 64-75
+  s_4576ba6009af55::t_7be7abe266409a 9-12
+docs/AGENTS.md
+  s_4576ba6009af55::t_e56cfd01e27242 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "34f9844235c8d18b09cc389651fe1df4bed2bb91",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
