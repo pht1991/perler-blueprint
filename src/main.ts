@@ -105,7 +105,8 @@ function buildColorList() {
   const wrap = $('colorList');
   wrap.innerHTML = '';
   const arr = [...usedMap.entries()].sort((a, b) => b[1] - a[1]);
-  $('colorHint').textContent = `${arr.length} 色`;
+  const dn = arr.filter(([c]) => store.get().done.has(c)).length;
+  $('colorHint').textContent = dn ? `共 ${arr.length} 色 · 已拼 ${dn}` : `${arr.length} 色`;
   const pm = PALETTE_BY_ID[store.get().paletteId];
   for (const [code, count] of arr) {
     const c = pm?.colors.find((x) => x.code === code);
@@ -134,11 +135,13 @@ function selectEditColor(code: string) {
   saveProgress(store.get()); buildColorList(); syncToolUI();
 }
 function toggleDone(code: string) {
-  const done = new Set(store.get().done);
+  const s = store.get();
+  const done = new Set(s.done);
   if (done.has(code)) done.delete(code); else done.add(code);
   store.set({ done });
-  const left = (store.get().blueprint?.codes.filter((c) => c !== null).length ?? 0) - done.size;
-  toast(`${code} 已完成 · 剩余 ${left} 色`);
+  // 剩余 = 用到的颜色总数 - 已标记完成色数（按色计数，不是按珠）
+  const left = usedMap.size - [...usedMap.keys()].filter((c) => done.has(c)).length;
+  toast(done.has(code) ? `${code} 标记已拼 · 剩余 ${left} 色` : `${code} 已取消标记 · 剩余 ${left} 色`);
   saveProgress(store.get()); buildColorList();
 }
 

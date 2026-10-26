@@ -160,7 +160,8 @@ export class StageRenderer {
     const pegMesh = new THREE.InstancedMesh(this.pegGeo, this.pegMat, pegs.length);
     const m = new THREE.Matrix4();
     pegs.forEach((p, i) => {
-      m.makeTranslation(p.x - w / 2 + 0.5, p.y - h / 2 + 0.5, 0.08);
+      // 行方向与 2D 图纸一致：第 0 行在屏幕上方（+Y 远离镜头）
+      m.makeTranslation(p.x - w / 2 + 0.5, h / 2 - 0.5 - p.y, 0.08);
       pegMesh.setMatrixAt(i, m);
     });
     pegMesh.instanceMatrix.needsUpdate = true;
@@ -235,7 +236,8 @@ export class StageRenderer {
     for (let i = 0; i < beads.length; i++) {
       const b = beads[i];
       const px = (mirror ? (w - 1 - b.x) : b.x) - w / 2 + 0.5;
-      const py = b.y - h / 2 + 0.5;
+      // 行方向与 2D 图纸一致：图纸第 0 行（顶部）映射到世界 +Y（镜头远端 = 屏幕上方）
+      const py = h / 2 - 0.5 - b.y;
       m.makeTranslation(px, py, b.z);
       mesh.setMatrixAt(i, m);
       color.setRGB(b.rgb[0] / 255, b.rgb[1] / 255, b.rgb[2] / 255);
