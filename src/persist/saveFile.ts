@@ -6,8 +6,10 @@ import type { AppState } from '../state/store';
 //
 // 注意：自导出依赖「整页 DOM 可序列化 + 脚本已内联」。Vite 开发模式下脚本是 /src/main.ts（无法独立运行），
 // 所以该能力在 `npm run build`（vite-plugin-singlefile，产出单文件 HTML）后使用才完整。开发模式点保存会提示用构建版。
-
-const SAVED_TAG = /<script id="perlerSaved" type="application\/json">[\s\S]*?<\/script>/;
+//
+// 坑（已踩过）：不要用正则在整页 HTML 字符串里替换存档节点——bundle 压缩源码里就含有
+// `<script id="perlerSaved">` 模板字符串，正则会先匹配到它，把大段初始化代码替换成 JSON，
+// 导出文件直接语法报错白屏。必须走 DOM：改写真实节点的 textContent 后再序列化 outerHTML。
 const SAVE_STAMP_KEY = (t: string) => `perler-saved-at-${t}`;
 
 function taskKey(s: AppState): string {
@@ -59,7 +61,18 @@ export async function saveFileExport(s: AppState): Promise<'ok' | 'shared' | 'ca
     localStorage.setItem(SAVE_STAMP_KEY(taskKey(s)), String(savedAt));
   } catch (e) { /* ignore */ }
   const json = JSON.stringify({ savedAt, items }).replace(/</g, '\\u003c');
-  const html = document.documentElement.outerHTML.replace(SAVED_TAG, () => `<script id="perlerSaved" type="application/json">${json}<\/script>`);
+
+  // DOM 方式写入存档节点（绝不能用正则替换 HTML 字符串，会误伤 bundle 源码，见文件头注释）
+  let node = document.getElementById('perlerSaved') as HTMLScriptElement | null;
+  if (!node) {
+    node = document.createElement('script');
+    node.id = 'perlerSaved';
+    node.type = 'application/json';
+    (document.body || document.documentElement).appendChild(node);
+  }
+  node.textContent = json;
+  // outerHTML 不含 doctype，补上避免 quirks 模式
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 
   const d = new Date(), p = (n: number) => String(n).padStart(2, '0');
   const stamp = `${d.getMonth() + 1}月${d.getDate()}日_${p(d.getHours())}点${p(d.getMinutes())}分${p(d.getSeconds())}秒`;
