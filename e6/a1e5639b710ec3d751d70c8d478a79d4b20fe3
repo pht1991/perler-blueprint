@@ -1,0 +1,46 @@
+src/ui/editor.ts
+  s_4576ba6009af55::t_49901646b7c545 81-87
+src/render/stage3d.ts
+  s_4576ba6009af55::t_e70212a42fdbe0 121-130,135
+index.html
+  s_4576ba6009af55::t_836996fa987066 89
+  s_4576ba6009af55::t_96940d4757635f 110
+  s_4576ba6009af55::t_7e53d680161d52 82-87
+  s_4576ba6009af55::t_2c58822e342692 114-118
+src/main.ts
+  s_4576ba6009af55::t_002e4051b075d2 223
+  s_4576ba6009af55::t_1896f968d82f32 51
+  s_4576ba6009af55::t_21b669019a6638 209-210
+  s_4576ba6009af55::t_069302d6b39951 296,301
+  s_4576ba6009af55::t_28b81104cc0e09 31
+  s_4576ba6009af55::t_c102e093d1aa4b 250
+  s_4576ba6009af55::t_f0b4d22893bb4a 139-193,243
+  s_4576ba6009af55::t_2b3a61930ac333 226,234-242
+  s_4576ba6009af55::t_ef92af02b45062 468
+src/render/grid2d.ts
+  s_4576ba6009af55::t_7de8423f1d9275 11-12
+  s_4576ba6009af55::t_a958be0ffa6d9c 33
+docs/AGENTS.md
+  s_4576ba6009af55::t_9824c5b4d146f9 71,73-74
+src/styles/main.css
+  s_4576ba6009af55::t_bfd4ba6ecf95af 233,235-252
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "e6a1e5639b710ec3d751d70c8d478a79d4b20fe3",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
