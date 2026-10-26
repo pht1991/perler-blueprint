@@ -1,0 +1,34 @@
+docs/AGENTS.md
+  s_4576ba6009af55::t_1f2ab3e6d22fd6 24-25,31,41,68,70,73-75
+src/core/depth.ts
+  s_4576ba6009af55::t_c3697f03231b20 1-72
+src/core/quantize.ts
+  s_4576ba6009af55::t_af554b00352adb 1,7,68-69,72,75-76,78-79,81-86,88-107,109-111,113-115,117,120-127,138-207
+src/main.ts
+  s_4576ba6009af55::t_cf350cb0d0f192 14,197-203,284-290
+src/render/stage3d.ts
+  s_4576ba6009af55::t_88b85ddca88f28 5,7,55-66,93-141
+src/state/store.ts
+  s_4576ba6009af55::t_07b073e90b5169 15,38
+src/ui/batch.ts
+  s_4576ba6009af55::t_57e55adf449aef 1-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "7c4762aa0a0f28775f84f31d4999e828db02784c",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
