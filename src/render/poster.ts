@@ -1,4 +1,5 @@
 import type { Blueprint, Palette } from '../core/types';
+import { t } from '../i18n';
 
 export interface PosterInput {
   title: string;
@@ -36,7 +37,7 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
   // 标题
   x.fillStyle = INK; x.textBaseline = 'top';
   x.font = '700 52px Rajdhani, "Noto Sans SC", sans-serif';
-  x.fillText(title || '拼豆图纸', 60, 50);
+  x.fillText(title || t('app.title'), 60, 50);
   x.fillStyle = INK2; x.font = '400 24px "Noto Sans SC", sans-serif';
   const sub = `${blueprint.w}×${blueprint.h} · ${palette.label}${meta ? ' · ' + meta : ''}`;
   x.fillText(sub, 60, 112);
@@ -61,7 +62,7 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
   const chartX = 60, chartW = W - 120;
   let cy = chartStart;
   x.fillStyle = RED; x.font = '700 30px Rajdhani, "Noto Sans SC", sans-serif';
-  x.fillText('色号对照表', chartX, cy); cy += chartTop;
+  x.fillText(t('poster.chart'), chartX, cy); cy += chartTop;
   x.font = '400 22px "Noto Sans SC", sans-serif';
   const colW = chartW / cols;
   items.forEach(([code, n], i) => {
@@ -76,7 +77,7 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
     x.fillStyle = INK2; x.font = '400 20px "Noto Sans SC", sans-serif';
     const name = color?.name ?? '';
     x.fillText(name.slice(0, 8), ix + swatch + 14, iy + 34);
-    x.fillText(`${n} 颗 · ${((n / total) * 100).toFixed(1)}%`, ix + swatch + 14, iy + 58);
+    x.fillText(t('poster.beads', { n, pct: ((n / total) * 100).toFixed(1) }), ix + swatch + 14, iy + 58);
   });
 
   return cv;

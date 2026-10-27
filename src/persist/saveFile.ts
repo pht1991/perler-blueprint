@@ -1,5 +1,6 @@
 import type { AppState } from '../state/store';
 import { store } from '../state/store';
+import { t, getLang } from '../i18n';
 
 // [SAVE-FILE] 存档随文件走
 // 「保存」把本任务的全部本地存档（进度、图纸）写进一份新的单文件 HTML 交给用户。
@@ -88,9 +89,12 @@ export async function saveFileExport(s: AppState): Promise<'ok' | 'shared' | 'ca
   const html = '<!DOCTYPE html>\n' + root.outerHTML;
 
   const d = new Date(), p = (n: number) => String(n).padStart(2, '0');
-  const stamp = `${d.getMonth() + 1}月${d.getDate()}日_${p(d.getHours())}点${p(d.getMinutes())}分${p(d.getSeconds())}秒`;
-  const name = (s.title || '拼豆图纸').replace(/[\\/:*?"<>|]/g, '').trim() || '拼豆图纸';
-  const file = new File([html], `【拼豆图纸】${name}-${stamp}.html`, { type: 'text/html' });
+  // 中文时间戳「10月27日_9点13分33秒」；英文「2026-10-27_09-13-33」
+  const stamp = getLang() === 'zh'
+    ? `${d.getMonth() + 1}月${d.getDate()}日_${p(d.getHours())}点${p(d.getMinutes())}分${p(d.getSeconds())}秒`
+    : `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}_${p(d.getHours())}-${p(d.getMinutes())}-${p(d.getSeconds())}`;
+  const name = (s.title || t('app.title')).replace(/[\\/:*?"<>|]/g, '').trim() || t('app.title');
+  const file = new File([html], `${t('file.html')}${name}-${stamp}.html`, { type: 'text/html' });
 
   if (isCoarse()) {
     try {

@@ -6,6 +6,7 @@ import type { Blueprint, Palette } from '../core/types';
 import { generateFromImage } from './upload';
 import { drawPoster } from '../render/poster';
 import { shareOrDownload, downloadFile } from './share';
+import { t, dateLocale } from '../i18n';
 
 export interface BatchHandles {
   openBtn: HTMLElement;    // 批量导出（下载 PDF + CSV）
@@ -48,36 +49,36 @@ export function setupBatch(h: BatchHandles) {
   }
 
   h.openBtn.addEventListener('click', async () => {
-    if (!store.get().blueprint) { h.toast('先上传图片生成图纸'); return; }
-    h.toast('批量生成中…');
+    if (!store.get().blueprint) { h.toast(t('t.needBlueprint')); return; }
+    h.toast(t('t.batchWorking'));
     try {
       const results = await generateAll();
       const palette = PALETTE_BY_ID[store.get().paletteId]!;
       const title = store.get().title;
       downloadFile(resultsToPdfFile(results, palette, title));
       downloadCsv(results, palette, title);
-      h.toast(`已导出 ${results.length} 档规格 PDF + CSV`);
+      h.toast(t('t.batchDone', { n: results.length }));
     } catch (e) {
       if ((e as Error)?.message === 'no-blueprint') return;
       console.error(e);
-      h.toast('批量导出失败，看下控制台');
+      h.toast(t('t.batchFail'));
     }
   });
 
   h.shareBtn.addEventListener('click', async () => {
-    if (!store.get().blueprint) { h.toast('先上传图片生成图纸'); return; }
-    h.toast('批量生成中…');
+    if (!store.get().blueprint) { h.toast(t('t.needBlueprint')); return; }
+    h.toast(t('t.batchWorking'));
     try {
       const results = await generateAll();
       const palette = PALETTE_BY_ID[store.get().paletteId]!;
       const title = store.get().title;
       const file = resultsToPdfFile(results, palette, title);
       const r = await shareOrDownload(file);
-      if (r === 'shared') h.toast('已调起分享（PDF 可存「文件」/发微信；相册只收图片）');
-      else if (r === 'downloaded') h.toast('当前环境不支持分享，已走下载');
+      if (r === 'shared') h.toast(t('t.shared'));
+      else if (r === 'downloaded') h.toast(t('t.fallbackDownload'));
     } catch (e) {
       console.error(e);
-      h.toast('批量分享失败，看下控制台');
+      h.toast(t('t.batchShareFail'));
     }
   });
 }
@@ -110,7 +111,7 @@ function resultsToPdfFile(results: BatchResult[], palette: Palette, title: strin
       blueprint: r.blueprint,
       palette,
       used: r.used,
-      meta: `批量合集 ${new Date().toLocaleDateString('zh-CN')}`,
+      meta: `${t('poster.batchMeta')}${new Date().toLocaleDateString(dateLocale())}`,
     });
     if (!pdf) {
       pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [cv.width, cv.height] });
@@ -120,7 +121,7 @@ function resultsToPdfFile(results: BatchResult[], palette: Palette, title: strin
     pdf.addImage(cv.toDataURL('image/png'), 'PNG', 0, 0, cv.width, cv.height);
   }
   const blob = pdf!.output('blob');
-  return new File([blob], `【拼豆图纸合集】${title}.pdf`, { type: 'application/pdf' });
+  return new File([blob], `${t('file.collection')}${title}.pdf`, { type: 'application/pdf' });
 }
 
 function downloadCsv(results: BatchResult[], palette: Palette, title: string) {
@@ -130,7 +131,7 @@ function downloadCsv(results: BatchResult[], palette: Palette, title: string) {
   for (const r of results) for (const [code, n] of r.used) total.set(code, (total.get(code) ?? 0) + n);
   const codesUnion = [...total.keys()].sort((a, b) => (total.get(b!)! - total.get(a!)!));
 
-  const head = ['色号', '名称', 'HEX', ...results.map((r) => `${r.size}×${r.size}`), '合计'];
+  const head = [t('csv.code'), t('csv.name'), 'HEX', ...results.map((r) => `${r.size}×${r.size}`), t('csv.total')];
   const esc = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
   const lines = [head.map(esc).join(',')];
   for (const code of codesUnion) {
@@ -146,5 +147,5 @@ function downloadCsv(results: BatchResult[], palette: Palette, title: string) {
   }
   // BOM：让 Excel 正确识别 UTF-8
   const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-  downloadFile(new File([blob], `【拼豆配色统计】${title}.csv`, { type: 'text/csv' }));
+  downloadFile(new File([blob], `${t('file.stats')}${title}.csv`, { type: 'text/csv' }));
 }

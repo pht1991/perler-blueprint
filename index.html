@@ -18,46 +18,47 @@
   <header>
     <div class="title-block">
       <div class="title-row">
-        <h1 id="taskTitle">拼豆图纸</h1>
-        <button id="titleEdit" title="改名">✎</button>
+        <h1 id="taskTitle" data-i18n="app.title">拼豆图纸</h1>
+        <button id="titleEdit" data-i18n-title="ui.rename" title="改名">✎</button>
       </div>
-      <div class="sub" id="subTitle">上传图片 · 生成拼豆图纸</div>
+      <div class="sub" id="subTitle" data-i18n="ui.subtitle">上传图片 · 生成拼豆图纸</div>
     </div>
     <div class="spacer"></div>
-    <button class="btn" id="uploadBtn">上传图片</button>
-    <button class="btn" id="compareBtn" title="原图与图纸并排对照">对比</button>
-    <button class="btn" id="batchBtn">批量导出</button>
-    <button class="btn" id="batchShareBtn" title="合集 PDF 走系统分享面板（手机可存文件/发微信），不支持时降级下载">批量分享</button>
-    <button class="btn" id="posterBtn">导出海报</button>
-    <button class="btn" id="flowExpBtn">导出单文件</button>
-    <button class="btn primary" id="edSave">保存</button>
+    <button class="btn" id="langBtn" title="Language">EN</button>
+    <button class="btn" id="uploadBtn" data-i18n="ui.upload">上传图片</button>
+    <button class="btn" id="compareBtn" data-i18n="ui.compare" data-i18n-title="ui.compareTip" title="原图与图纸并排对照">对比</button>
+    <button class="btn" id="batchBtn" data-i18n="ui.batch">批量导出</button>
+    <button class="btn" id="batchShareBtn" data-i18n="ui.batchShare" data-i18n-title="ui.batchShareTip" title="合集 PDF 走系统分享面板（手机可存文件/发微信），不支持时降级下载">批量分享</button>
+    <button class="btn" id="posterBtn" data-i18n="ui.poster">导出海报</button>
+    <button class="btn" id="flowExpBtn" data-i18n="ui.exportHtml">导出单文件</button>
+    <button class="btn primary" id="edSave" data-i18n="ui.save">保存</button>
     <input type="file" id="fileInput" accept="image/*" hidden />
   </header>
 
   <main>
     <aside>
       <div class="panel-section">
-        <div class="panel-label">板规格</div>
+        <div class="panel-label" data-i18n="ui.size">板规格</div>
         <div class="size-grid" id="sizeGrid"></div>
         <div class="cs-card">
           <div class="cs-in">
-            <span class="cs-t">自定义</span>
+            <span class="cs-t" data-i18n="ui.custom">自定义</span>
             <div class="cs-field">
-              <input id="csN" type="number" inputmode="numeric" min="15" max="156" placeholder="边长" />
+              <input id="csN" type="number" inputmode="numeric" min="15" max="156" data-i18n-ph="ui.sidePh" placeholder="边长" />
               <span class="cs-eq" id="csEcho">×N</span>
             </div>
-            <button id="csGo" class="btn">生成</button>
+            <button id="csGo" class="btn" data-i18n="ui.go">生成</button>
           </div>
         </div>
       </div>
 
       <div class="panel-section">
-        <div class="panel-label">色板</div>
+        <div class="panel-label" data-i18n="ui.palette">色板</div>
         <div class="pal-list" id="palList"></div>
       </div>
 
       <div class="panel-section">
-        <div class="panel-label">颜色数量 <span class="r" id="budgetHint"></span></div>
+        <div class="panel-label"><span data-i18n="ui.colorCount">颜色数量</span> <span class="r" id="budgetHint"></span></div>
         <div class="budget-row">
           <input type="range" id="budgetSlider" min="0" step="1" />
           <div class="budget-ticks" id="budgetTicks"></div>
@@ -65,34 +66,30 @@
       </div>
 
       <div class="panel-section" id="viewOpsSec">
-        <div class="panel-label">视图 / 操作</div>
+        <div class="panel-label" data-i18n="ui.viewOps">视图 / 操作</div>
         <div class="opt-row">
-          <button class="btn view-btn active" data-view="grid">平面</button>
-          <button class="btn view-btn" data-view="stage">3D 豆板</button>
+          <button class="btn view-btn active" data-view="grid" data-i18n="ui.viewGrid">平面</button>
+          <button class="btn view-btn" data-view="stage" data-i18n="ui.viewStage">3D 豆板</button>
         </div>
         <div class="opt-row">
-          <button class="btn" id="mirrorBtn">镜像</button>
-          <button class="btn" id="pixelBtn" title="纯色块平面渲染，方便对照原图检查">像素图</button>
-          <button class="btn" id="meltBtn">模拟烫豆</button>
-          <button class="btn" id="depthBtn" title="3D 视图下按图片明暗把豆板堆成立体分层">立体分层</button>
-        </div>
-        <div class="opt-row" id="meltRow" hidden>
-          <input type="range" id="meltSlider" min="0" max="100" value="50" style="flex:1" />
+          <button class="btn" id="mirrorBtn" data-i18n="ui.mirror">镜像</button>
+          <button class="btn" id="pixelBtn" data-i18n="ui.pixel" data-i18n-title="ui.pixelTip" title="纯色块平面渲染，方便对照原图检查">像素图</button>
+          <button class="btn" id="depthBtn" data-i18n="ui.depth" data-i18n-title="ui.depthTip" title="3D 视图下按图片明暗把豆板堆成立体分层">立体分层</button>
         </div>
       </div>
 
       <div class="panel-section" id="islandSec" hidden>
-        <div class="panel-label">孤立像素 <span class="r" id="islandHint"></span></div>
-        <button class="btn" id="islandAllBtn">一键清除散珠</button>
-        <div class="island-note">四周无相邻珠子的单颗珠，拼的时候要单独固定，建议清除</div>
+        <div class="panel-label"><span data-i18n="ui.island">孤立像素</span> <span class="r" id="islandHint"></span></div>
+        <button class="btn" id="islandAllBtn" data-i18n="ui.islandClear">一键清除散珠</button>
+        <div class="island-note" data-i18n="ui.islandNote">四周无相邻珠子的单颗珠，拼的时候要单独固定，建议清除</div>
       </div>
 
       <div class="panel-section">
-        <div class="panel-label">颜色用量 <span class="r" id="colorHint"></span><button class="mini-btn" id="doneAllBtn" title="全部标记已拼 / 全部清除">全✓</button></div>
+        <div class="panel-label"><span data-i18n="ui.usage">颜色用量</span> <span class="r" id="colorHint"></span><button class="mini-btn" id="doneAllBtn" data-i18n="ui.allDone" data-i18n-title="ui.allDoneTip" title="全部标记已拼 / 全部清除">全✓</button></div>
         <div class="pal-list" id="colorList"></div>
-        <button class="pal-more" id="palSearchToggle">全部色号 ▾</button>
+        <button class="pal-more" id="palSearchToggle" data-i18n="ui.allColors">全部色号 ▾</button>
         <div class="pal-search" id="palSearchPanel" hidden>
-          <input id="palSearchInput" placeholder="搜索色号 / 名称 / HEX" />
+          <input id="palSearchInput" data-i18n-ph="ui.searchPh" placeholder="搜索色号 / 名称 / HEX" />
           <div class="psw-grid" id="palSearchGrid"></div>
         </div>
       </div>
@@ -100,17 +97,17 @@
 
     <section class="stage-wrap">
       <div id="edBar" hidden>
-        <button data-tool="brush" title="画笔（B）：按住拖动连续绘制">✎ 画笔</button>
-        <button data-tool="fill" title="填充（G）：把相连的同色区域换成当前色">▨ 填充</button>
-        <button data-tool="eraser" title="橡皮（X）：清除格子">⌫ 橡皮</button>
-        <button data-tool="picker" title="取色（I）：吸取当前格颜色">◉ 取色</button>
+        <button data-tool="brush" data-i18n="tool.brush" data-i18n-title="tool.brushTip" title="画笔（B）：按住拖动连续绘制">✎ 画笔</button>
+        <button data-tool="fill" data-i18n="tool.fill" data-i18n-title="tool.fillTip" title="填充（G）：把相连的同色区域换成当前色">▨ 填充</button>
+        <button data-tool="eraser" data-i18n="tool.eraser" data-i18n-title="tool.eraserTip" title="橡皮（X）：清除格子">⌫ 橡皮</button>
+        <button data-tool="picker" data-i18n="tool.picker" data-i18n-title="tool.pickerTip" title="取色（I）：吸取当前格颜色">◉ 取色</button>
         <span class="sep"></span>
         <span class="sw" id="edCurSw"></span><span class="cd" id="edCurCode"></span>
         <span class="ed-hint" id="edHint"></span>
         <span class="sep"></span>
-        <button id="edUndo" title="撤销（Ctrl+Z）">撤销</button>
-        <button id="edRedo" title="重做（Ctrl+Shift+Z）">重做</button>
-        <button id="edRestore" title="放弃全部编辑，回到生成时的图纸">恢复初始</button>
+        <button id="edUndo" data-i18n="ui.undo" data-i18n-title="ui.undoTip" title="撤销（Ctrl+Z）">撤销</button>
+        <button id="edRedo" data-i18n="ui.redo" data-i18n-title="ui.redoTip" title="重做（Ctrl+Shift+Z）">重做</button>
+        <button id="edRestore" data-i18n="ui.reset" data-i18n-title="ui.resetTip" title="放弃全部编辑，回到生成时的图纸">恢复初始</button>
       </div>
       <div class="canvas-wrap active" id="view-grid">
         <canvas id="gridCanvas"></canvas>
@@ -118,10 +115,10 @@
       </div>
       <div class="canvas-wrap" id="view-stage">
         <canvas id="stageCanvas"></canvas>
-        <button class="btn" id="topViewBtn" title="镜头移到豆板正上方">俯视</button>
+        <button class="btn" id="topViewBtn" data-i18n="ui.top" data-i18n-title="ui.topTip" title="镜头移到豆板正上方">俯视</button>
       </div>
       <div class="src-preview" id="srcPreview" hidden>
-        <div class="panel-label">原图</div>
+        <div class="panel-label" data-i18n="ui.photo">原图</div>
         <canvas id="srcCanvas"></canvas>
       </div>
     </section>
@@ -130,12 +127,12 @@
   <div class="overlay" id="posterOverlay" hidden>
     <div class="poster-box">
       <div class="poster-bar">
-        <span>拼豆海报预览</span>
+        <span data-i18n="ui.posterPreview">拼豆海报预览</span>
         <div class="spacer"></div>
-        <button class="btn" id="posterShare" title="PNG 走系统分享面板，iOS 可「存储图像」直接进相册">分享 / 存相册</button>
-        <button class="btn" id="posterDlPng">下载 PNG</button>
-        <button class="btn primary" id="posterDlPdf">下载 PDF</button>
-        <button class="btn" id="posterClose">关闭</button>
+        <button class="btn" id="posterShare" data-i18n="ui.shareSave" data-i18n-title="ui.shareSaveTip" title="PNG 走系统分享面板，iOS 可「存储图像」直接进相册">分享 / 存相册</button>
+        <button class="btn" id="posterDlPng" data-i18n="ui.dlPng">下载 PNG</button>
+        <button class="btn primary" id="posterDlPdf" data-i18n="ui.dlPdf">下载 PDF</button>
+        <button class="btn" id="posterClose" data-i18n="ui.close">关闭</button>
       </div>
       <div class="poster-scroll"><img id="posterImg" alt="海报预览" /></div>
     </div>
@@ -144,18 +141,18 @@
   <div class="overlay" id="compareOverlay" hidden>
     <div class="compare-box">
       <div class="poster-bar">
-        <span>原图对比 <span id="compareHint" class="sub"></span></span>
+        <span><span data-i18n="ui.compareTitle">原图对比</span> <span id="compareHint" class="sub"></span></span>
         <div class="spacer"></div>
-        <button class="btn" id="compareClose">关闭</button>
+        <button class="btn" id="compareClose" data-i18n="ui.close">关闭</button>
       </div>
       <div class="cmp-stage" id="cmpStage">
         <canvas id="cmpBp"></canvas>
         <canvas id="cmpSrc"></canvas>
         <div class="cmp-divider" id="cmpDivider"><span class="cmp-handle">◂▸</span></div>
-        <span class="cmp-tag l">原图</span>
-        <span class="cmp-tag r" id="cmpBpLabel">图纸</span>
+        <span class="cmp-tag l" data-i18n="ui.photo">原图</span>
+        <span class="cmp-tag r" id="cmpBpLabel" data-i18n="ui.pattern">图纸</span>
       </div>
-      <div class="cmp-note">拖动中间分隔线，左右滑动对比原图与图纸</div>
+      <div class="cmp-note" data-i18n="ui.compareNote">拖动中间分隔线，左右滑动对比原图与图纸</div>
     </div>
   </div>
 

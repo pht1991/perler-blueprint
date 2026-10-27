@@ -1,7 +1,7 @@
 import type { AppState } from '../state/store';
 import type { BeadColor, Palette } from '../core/types';
 
-/** 2D 拼豆图纸渲染：每格一个珠子色块，支持镜像、模拟烫豆、高亮/已完成标记。 */
+/** 2D 拼豆图纸渲染：每格一个珠子色块，支持镜像、高亮/已完成标记。 */
 export class GridRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -61,17 +61,9 @@ export class GridRenderer {
         const gx = ox + px * cell, gy = oy + y * cell;
 
         if (s.pixelView) {
-          // 像素视图：纯色块，无立体感/烫豆装饰，看图检查用
+          // 像素视图：纯色块，无立体感装饰，看图检查用
           ctx.fillStyle = color.hex;
           ctx.fillRect(gx, gy, cell, cell);
-        } else if (s.meltOn) {
-          // 模拟烫豆：珠子融成圆润凸起，带高光
-          const cx = gx + cell / 2, cy = gy + cell / 2, r = cell * (0.5 + s.melt * 0.12);
-          const grd = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
-          grd.addColorStop(0, lighten(color.hex, 0.25));
-          grd.addColorStop(1, color.hex);
-          ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
         } else {
           ctx.fillStyle = color.hex;
           ctx.fillRect(gx, gy, cell, cell);
@@ -104,12 +96,4 @@ export class GridRenderer {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
-}
-
-function lighten(hex: string, amt: number): string {
-  const h = hex.replace('#', '');
-  const r = Math.min(255, parseInt(h.slice(0, 2), 16) + 255 * amt);
-  const g = Math.min(255, parseInt(h.slice(2, 4), 16) + 255 * amt);
-  const b = Math.min(255, parseInt(h.slice(4, 6), 16) + 255 * amt);
-  return `rgb(${r | 0},${g | 0},${b | 0})`;
 }

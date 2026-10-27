@@ -169,7 +169,7 @@ export class StageRenderer {
     return g;
   }
 
-  /** 平面模式：圆珠按网格铺在钉板上（模拟烫豆=把珠子压矮） */
+  /** 平面模式：圆珠按网格铺在钉板上 */
   private buildFlat(s: AppState): THREE.Group {
     const bp = s.blueprint!;
     const { w, h, codes } = bp;
@@ -181,8 +181,7 @@ export class StageRenderer {
         if (code === null || code === undefined) continue;
         const bc = this.colorMap.get(code); if (!bc) continue;
         beadAt[y * w + x] = 1;
-        const z = s.meltOn ? 0.17 - s.melt * 0.1 : 0.17;
-        beads.push({ x, y, z, rgb: bc.rgb });
+        beads.push({ x, y, z: 0.17, rgb: bc.rgb });
       }
     }
     const g = this.buildBoard(w, h, beadAt);

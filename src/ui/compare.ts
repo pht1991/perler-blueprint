@@ -1,6 +1,7 @@
 import { store } from '../state/store';
 import type { Palette } from '../core/types';
 import { loadSrcImg } from '../persist/storage';
+import { t } from '../i18n';
 
 // [COMPARE] 原图对比滑块：原图与图纸两层画布同尺寸叠放，
 // 中间一条可拖动分隔线（Pointer Events，鼠标/触屏通吃），
@@ -28,12 +29,12 @@ export function setupCompare(opts: {
 
   openBtn.addEventListener('click', () => {
     const s = store.get();
-    if (!s.blueprint) { toast('先上传图片生成图纸'); return; }
+    if (!s.blueprint) { toast(t('t.needBlueprint')); return; }
     const dataUrl = loadSrcImg(s);
-    if (!dataUrl) { toast('这份存档没带原图（旧档），重新上传一次即可'); return; }
+    if (!dataUrl) { toast(t('t.noSrcImg')); return; }
     lastDataUrl = dataUrl;
     hint.textContent = s.title;
-    bpLabel.textContent = `图纸 ${s.blueprint.w}×${s.blueprint.h} · ${palette().label}`;
+    bpLabel.textContent = `${t('ui.pattern')} ${s.blueprint.w}×${s.blueprint.h} · ${palette().label}`;
     setPct(50);
     overlay.hidden = false;
     // 等布局生效后再画（拿得到容器尺寸）

@@ -5,6 +5,7 @@ import { store } from './state/store';
 import type { AppState, ViewMode } from './state/store';
 import { installMemStorageFallback, saveProgress, loadProgress, saveBlueprint, loadBlueprint, saveSrcImg, loadSrcImg } from './persist/storage';
 import { restoreFromEmbedded, saveFileExport } from './persist/saveFile';
+import { initI18n, t, getLang, setLang, onLangChange } from './i18n';
 import { GridRenderer } from './render/grid2d';
 import { StageRenderer } from './render/stage3d';
 import { generateFromImage } from './ui/upload';
@@ -17,6 +18,7 @@ import type { Palette } from './core/types';
 import type { Tool } from './state/store';
 
 installMemStorageFallback();
+initI18n();
 restoreFromEmbedded();
 if (!store.get().paletteId) store.set({ paletteId: PALETTES[0].id, size: Number(DEFAULT_SIZE) });
 
@@ -66,8 +68,8 @@ function syncToolUI() {
   $('edCurCode').textContent = s.editColor ?? '';
   // 工具操作提示：没激活工具时教怎么开始，激活后教怎么用
   $('edHint').textContent = !s.tool
-    ? (s.editColor ? '点工具开涂' : '点画笔即可开始（自动选色）')
-    : TOOL_HINT[s.tool];
+    ? (s.editColor ? t('t.hintIdlePick') : t('t.hintIdleNoPick'))
+    : t(`hint.${s.tool}`);
 }
 
 // ---- UI build ----
@@ -77,7 +79,7 @@ function buildSizeGrid() {
   for (const s of SIZES) {
     const el = document.createElement('div');
     el.className = 'size-card' + (String(s.w) === String(store.get().size) ? ' active' : '');
-    el.innerHTML = `<div class="n">${s.w}×${s.h}</div><div class="meta">${s.w * s.h} 颗</div>`;
+    el.innerHTML = `<div class="n">${s.w}×${s.h}</div><div class="meta">${t('list.beads', { n: s.w * s.h })}</div>`;
     el.onclick = () => selectSize(s.w);
     wrap.appendChild(el);
   }
@@ -95,7 +97,7 @@ function buildPaletteList() {
   for (const p of PALETTES) {
     const el = document.createElement('button');
     el.className = 'pal-btn' + (p.id === store.get().paletteId ? ' active' : '');
-    el.innerHTML = `<span>${p.label}</span><span class="sub">${p.colors.length}色</span>`;
+    el.innerHTML = `<span>${p.label}</span><span class="sub">${t('list.colors', { n: p.colors.length })}</span>`;
     el.onclick = () => { store.set({ paletteId: p.id }); buildPaletteList(); regen(); };
     wrap.appendChild(el);
   }
@@ -106,17 +108,19 @@ function buildColorList() {
   wrap.innerHTML = '';
   const arr = [...usedMap.entries()].sort((a, b) => b[1] - a[1]);
   const dn = arr.filter(([c]) => store.get().done.has(c)).length;
-  $('colorHint').textContent = dn ? `共 ${arr.length} 色 · 已拼 ${dn}` : `${arr.length} 色`;
+  $('colorHint').textContent = dn
+    ? t('list.usageDone', { n: arr.length, m: dn })
+    : t('list.usage', { n: arr.length });
   const pm = PALETTE_BY_ID[store.get().paletteId];
   for (const [code, count] of arr) {
     const c = pm?.colors.find((x) => x.code === code);
     const el = document.createElement('div');
     el.className = 'color-item' + (store.get().highlight === code ? ' hl' : '') + (store.get().done.has(code) ? ' done' : '') + (store.get().editColor === code ? ' ed' : '');
-    el.title = '点色块=选为编辑色 · 点行=高亮追踪 · ✓=标记已拼';
+    el.title = t('item.colorTip');
     const hex = c?.hex ?? '#ccc';
     el.innerHTML = `<span class="sw" style="background:${hex}"></span>
       <span class="cd">${code}</span><span class="nm">${c?.name ?? ''}</span>
-      <span class="ct">${count}</span><button class="ok" title="标记已拼">✓</button>`;
+      <span class="ct">${count}</span><button class="ok" title="${t('item.doneTip')}">✓</button>`;
     el.querySelector('.sw')!.addEventListener('click', () => selectEditColor(code));
     el.querySelector('.ok')!.addEventListener('click', (e) => { e.stopPropagation(); toggleDone(code); });
     wrap.appendChild(el);
@@ -141,7 +145,7 @@ function toggleDone(code: string) {
   store.set({ done });
   // 剩余 = 用到的颜色总数 - 已标记完成色数（按色计数，不是按珠）
   const left = usedMap.size - [...usedMap.keys()].filter((c) => done.has(c)).length;
-  toast(done.has(code) ? `${code} 标记已拼 · 剩余 ${left} 色` : `${code} 已取消标记 · 剩余 ${left} 色`);
+  toast(done.has(code) ? t('t.doneMark', { code, left }) : t('t.undoneMark', { code, left }));
   saveProgress(store.get()); buildColorList();
 }
 
@@ -164,7 +168,7 @@ function findIsolated(): number[] {
 function syncIsland() {
   const n = findIsolated().length;
   $('islandSec').hidden = n === 0;
-  $('islandHint').textContent = `${n} 颗`;
+  $('islandHint').textContent = t('ui.islandN', { n });
 }
 $('islandAllBtn').addEventListener('click', () => {
   const s = store.get(); if (!s.blueprint) return;
@@ -174,20 +178,20 @@ $('islandAllBtn').addEventListener('click', () => {
   editor.reset();
   saveBlueprint(s); saveProgress(s);
   renderActive(); buildColorList(); syncIsland();
-  toast(`已清除 ${idx.length} 颗孤立散珠`);
+  toast(t('t.islandCleared', { n: idx.length }));
 });
 
 // ---- 恢复初始图纸 ----
 $('edRestore').addEventListener('click', () => {
   const s = store.get();
   if (!s.blueprint || !baseCodes) return;
-  if (!confirm('放弃全部编辑，恢复到生成时的图纸？')) return;
+  if (!confirm(t('t.confirmRestore'))) return;
   s.blueprint.codes = baseCodes.slice();
   usedMap = countUsed(s);
   editor.reset();
   saveBlueprint(s); saveProgress(s);
   renderActive(); buildColorList(); syncIsland(); syncToolUI();
-  toast('已恢复初始图纸');
+  toast(t('t.restored'));
 });
 
 // ---- 用量清单：全部标记已拼 / 清除 ----
@@ -196,7 +200,7 @@ $('doneAllBtn').addEventListener('click', () => {
   const all = new Set(s.blueprint.codes.filter((c): c is string => !!c));
   const allDone = all.size > 0 && s.done.size >= all.size && [...all].every((c) => s.done.has(c));
   store.set({ done: allDone ? new Set<string>() : all });
-  toast(allDone ? '已清除全部完成标记' : '已全部标记为已拼');
+  toast(allDone ? t('t.allCleared') : t('t.allMarked'));
   saveProgress(store.get()); buildColorList();
 });
 
@@ -206,7 +210,7 @@ async function onUpload(file: File) {
   store.set({ title: file.name.replace(/\.[^.]+$/, '') });
   $('taskTitle').textContent = store.get().title;
   await regen();
-  toast('已生成图纸');
+  toast(t('t.generated'));
 }
 
 async function regen() {
@@ -263,7 +267,7 @@ async function restoreSrcImg() {
   hydrateSrcPreview(dataUrl);
   try {
     const blob = await (await fetch(dataUrl)).blob();
-    currentFile = new File([blob], `${store.get().title || '源图'}.jpg`, { type: blob.type || 'image/jpeg' });
+    currentFile = new File([blob], `${store.get().title || t('file.photo')}.jpg`, { type: blob.type || 'image/jpeg' });
   } catch { /* 重建失败只影响重新生成，预览已恢复 */ }
 }
 
@@ -298,10 +302,10 @@ function renderActive() {
 $('uploadBtn').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => { const f = fileInput.files?.[0]; if (f) onUpload(f); });
 $('titleEdit').addEventListener('click', () => {
-  const t = prompt('图纸标题', store.get().title); if (t) { store.set({ title: t }); $('taskTitle').textContent = t; }
+  const v = prompt(t('t.renamePrompt'), store.get().title); if (v) { store.set({ title: v }); $('taskTitle').textContent = v; }
 });
 $('flowExpBtn').addEventListener('click', () => {
-  if (import.meta.env.DEV) { toast('自导出请用 npm run build 后的单文件'); return; }
+  if (import.meta.env.DEV) { toast(t('t.devExport')); return; }
   saveFileExport(store.get());
 });
 $('edSave').addEventListener('click', () => { saveProgress(store.get()); saveBlueprint(store.get()); saveFileExport(store.get()); });
@@ -322,13 +326,8 @@ $('depthBtn').addEventListener('click', () => {
   store.set({ depth3d: on });
   $('depthBtn').classList.toggle('active', on);
   renderActive();
-  if (on && store.get().view !== 'stage') toast('立体分层在「3D 豆板」视图生效');
+  if (on && store.get().view !== 'stage') toast(t('t.depthHint'));
 });
-$('meltBtn').addEventListener('click', () => {
-  const on = !store.get().meltOn; store.set({ meltOn: on });
-  $('meltRow').hidden = !on; renderActive();
-});
-$('meltSlider').addEventListener('input', (e) => { store.set({ melt: Number((e.target as HTMLInputElement).value) / 100 }); renderActive(); });
 
 /** 以画布坐标 (mx,my) 为锚点缩放；null = 以画布中心为锚 */
 function zoomAt(mx: number | null, my: number | null, factor: number) {
@@ -431,23 +430,17 @@ gridCanvas.addEventListener('pointercancel', endPointer);
 const TOOLS: Tool[] = ['brush', 'fill', 'eraser', 'picker'];
 const TOOL_KEYS: Record<string, Tool> = { b: 'brush', g: 'fill', x: 'eraser', i: 'picker' };
 const NEEDS_COLOR = (t: Tool) => t === 'brush' || t === 'fill';
-const TOOL_HINT: Record<Tool, string> = {
-  brush: '按住涂抹上色 · 换色点右侧色块',
-  fill: '点一下 = 相连同色区域整体换色',
-  eraser: '点一下或按住抹掉珠子',
-  picker: '点图纸上的珠子吸取颜色（吸完自动切回画笔）',
-};
-function setTool(t: Tool) {
+function setTool(tool: Tool) {
   const s = store.get();
-  if (NEEDS_COLOR(t) && !s.editColor) {
+  if (NEEDS_COLOR(tool) && !s.editColor) {
     // 没选色不再卡死流程：自动选用量最多的色，用户可随时点色块换
     const top = [...usedMap.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
-    if (!top) { toast('图纸是空的，没东西可编辑'); return; }
+    if (!top) { toast(t('t.emptyBoard')); return; }
     store.set({ editColor: top, highlight: top });
     buildColorList();
-    toast(`已自动选 ${top}（用量最多）· 换色点右侧色块`);
+    toast(t('t.autoPick', { code: top }));
   }
-  store.set({ tool: store.get().tool === t ? null : t });
+  store.set({ tool: store.get().tool === tool ? null : tool });
   syncToolUI();
 }
 $('edBar').querySelectorAll<HTMLButtonElement>('[data-tool]').forEach((b) => {
@@ -462,8 +455,8 @@ window.addEventListener('keydown', (e) => {
     e.shiftKey ? editor.redo() : editor.undo();
     return;
   }
-  const t = TOOL_KEYS[e.key.toLowerCase()];
-  if (t && store.get().blueprint) setTool(t);
+  const k = TOOL_KEYS[e.key.toLowerCase()];
+  if (k && store.get().blueprint) setTool(k);
 });
 
 // ---- 批量导出 / 海报导出 / 全色号搜索 ----
@@ -521,7 +514,7 @@ bs.min = '0'; bs.max = '64'; bs.value = '0'; bs.step = '1';
 bs.addEventListener('input', (e) => {
   const v = Number((e.target as HTMLInputElement).value);
   store.set({ maxColors: v });
-  $('budgetHint').textContent = v === 0 ? '不限' : `≤${v}色`;
+  $('budgetHint').textContent = v === 0 ? t('ui.unlimited') : t('ui.budgetN', { n: v });
   if (currentFile) regen();
 });
 
@@ -558,10 +551,33 @@ function countUsed(s: AppState): Map<string, number> {
   return m;
 }
 
+// ---- 中 / EN 语言切换 ----
+/** 未被用户改过（仍是两语言默认值之一）的标题跟随语言；改过名的尊重用户命名 */
+function applyDefaultTitle() {
+  const s = store.get();
+  if (!s.title || s.title === '拼豆图纸' || s.title === 'Perler Blueprint') {
+    store.set({ title: t('app.title') });
+  }
+  $('taskTitle').textContent = store.get().title || t('app.title');
+}
+function syncLangBtn() { $('langBtn').textContent = getLang() === 'zh' ? 'EN' : '中'; }
+$('langBtn').addEventListener('click', () => setLang(getLang() === 'zh' ? 'en' : 'zh'));
+syncLangBtn();
+onLangChange(() => {
+  syncLangBtn();
+  applyDefaultTitle();
+  buildSizeGrid(); buildPaletteList(); buildColorList();
+  syncToolUI(); syncIsland();
+  const mc = store.get().maxColors;
+  $('budgetHint').textContent = mc === 0 ? t('ui.unlimited') : t('ui.budgetN', { n: mc });
+  renderActive();
+});
+
 // ---- init ----
 buildSizeGrid();
 buildPaletteList();
-$('budgetHint').textContent = '不限';
+$('budgetHint').textContent = t('ui.unlimited');
+$('taskTitle').textContent = store.get().title || t('app.title');
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });

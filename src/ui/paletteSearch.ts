@@ -1,5 +1,6 @@
 import { store } from '../state/store';
 import { PALETTE_BY_ID } from '../data/palettes';
+import { t } from '../i18n';
 
 export interface PalSearchHandles {
   toggleBtn: HTMLElement;
@@ -41,7 +42,7 @@ export function setupPaletteSearch(h: PalSearchHandles) {
     }
     if (matched.length > RENDER_CAP) {
       const note = document.createElement('div');
-      note.className = 'psw-note'; note.textContent = `仅显示前 ${RENDER_CAP} / 共 ${matched.length} 色，请缩小搜索`;
+      note.className = 'psw-note'; note.textContent = t('t.searchCap', { cap: RENDER_CAP, n: matched.length });
       h.grid.appendChild(note);
     }
   }

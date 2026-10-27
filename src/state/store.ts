@@ -10,9 +10,7 @@ export interface AppState {
   paletteId: string;
   maxColors: number;       // 0 = 不限（用完整色板）
   mirror: boolean;
-  pixelView: boolean;      // 2D 像素视图：纯色块平面渲染（无珠子立体感/烫豆）
-  meltOn: boolean;
-  melt: number;            // 0..1
+  pixelView: boolean;      // 2D 像素视图：纯色块平面渲染（无珠子立体感）
   depth3d: boolean;        // 3D 分层模式：深度启发式堆叠（false = 平面挤出）
   scale: number;           // 每格像素（CSS px）
   ox: number; oy: number;  // 平移
@@ -35,8 +33,6 @@ class Store {
     maxColors: 0,
     mirror: false,
     pixelView: false,
-    meltOn: false,
-    melt: 0.5,
     depth3d: false,
     scale: 0,
     ox: 0, oy: 0,

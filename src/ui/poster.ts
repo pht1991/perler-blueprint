@@ -3,6 +3,7 @@ import { drawPoster } from '../render/poster';
 import { store } from '../state/store';
 import { PALETTE_BY_ID } from '../data/palettes';
 import { shareOrDownload, canvasToPngFile } from './share';
+import { t, dateLocale } from '../i18n';
 
 export interface PosterHandles {
   openBtn: HTMLElement;
@@ -22,14 +23,14 @@ export function setupPoster(h: PosterHandles) {
 
   function build(): HTMLCanvasElement | null {
     const s = store.get();
-    if (!s.blueprint) { h.toast('先上传图片生成图纸'); return null; }
+    if (!s.blueprint) { h.toast(t('t.needBlueprint')); return null; }
     const palette = PALETTE_BY_ID[s.paletteId];
     const cv = drawPoster({
       title: s.title,
       blueprint: s.blueprint,
       palette,
       used: h.getUsed(),
-      meta: new Date().toLocaleDateString('zh-CN'),
+      meta: new Date().toLocaleDateString(dateLocale()),
     });
     return cv;
   }
@@ -45,17 +46,17 @@ export function setupPoster(h: PosterHandles) {
   // 分享 / 存相册：PNG 走系统分享面板（iOS 可「存储图像」进相册），不支持时降级下载
   h.shareBtn.addEventListener('click', async () => {
     if (!lastCanvas) return;
-    const file = await canvasToPngFile(lastCanvas, `【拼豆海报】${store.get().title}.png`);
+    const file = await canvasToPngFile(lastCanvas, `${t('file.poster')}${store.get().title}.png`);
     const r = await shareOrDownload(file);
-    if (r === 'shared') h.toast('已调起分享：iOS 选「存储图像」进相册');
-    else if (r === 'downloaded') h.toast('当前环境不支持分享，已走下载');
+    if (r === 'shared') h.toast(t('t.sharedPoster'));
+    else if (r === 'downloaded') h.toast(t('t.fallbackDownload'));
   });
 
   h.dlPng.addEventListener('click', () => {
     if (!lastCanvas) return;
     const a = document.createElement('a');
     a.href = lastCanvas.toDataURL('image/png');
-    a.download = `【拼豆海报】${store.get().title}.png`;
+    a.download = `${t('file.poster')}${store.get().title}.png`;
     a.click();
   });
 
@@ -64,6 +65,6 @@ export function setupPoster(h: PosterHandles) {
     const cv = lastCanvas;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [cv.width, cv.height] });
     pdf.addImage(cv.toDataURL('image/png'), 'PNG', 0, 0, cv.width, cv.height);
-    pdf.save(`【拼豆海报】${store.get().title}.pdf`);
+    pdf.save(`${t('file.poster')}${store.get().title}.pdf`);
   });
 }
