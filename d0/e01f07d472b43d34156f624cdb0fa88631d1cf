@@ -1,0 +1,26 @@
+src/styles/main.css
+  s_4576ba6009af55::t_fed2215761ce4e 149,155-163,165,167-168,171
+index.html
+  s_4576ba6009af55::t_c5c05fc4bf1c48 67
+src/main.ts
+  s_4576ba6009af55::t_70977e76ef66b2 566-577
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "d0e01f07d472b43d34156f624cdb0fa88631d1cf",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
