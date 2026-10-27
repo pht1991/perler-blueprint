@@ -1,0 +1,29 @@
+src/styles/main.css
+  s_4576ba6009af55::t_9c27a1ba4b3579 250,256-262,264-269,271-280
+src/ui/compare.ts
+  s_4576ba6009af55::t_fe161d83470afa 5-8,16-17,25,27,36-37,40,46-67,70-85,88,97-99,106,110-125
+  s_4576ba6009af55::t_305a9c5a8d46f8 126
+index.html
+  s_4576ba6009af55::t_2ca23aade501ce 151-156,158
+src/main.ts
+  s_4576ba6009af55::t_efb587240ecc66 481-482
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "f556b936c423f75bd23a050d637dfbafce76ed30",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
