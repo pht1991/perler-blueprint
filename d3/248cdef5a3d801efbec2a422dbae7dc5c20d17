@@ -1,0 +1,87 @@
+src/render/grid2d.ts
+  s_4576ba6009af55::t_7048badaad9af2 64
+  s_4576ba6009af55::t_058acafa273f09 4
+src/i18n.ts
+  s_4576ba6009af55::t_90e1e7fcac1a8a 1-161,163-200
+  s_4576ba6009af55::t_5f31e6d083a9eb 162
+src/persist/saveFile.ts
+  s_4576ba6009af55::t_c7d0dd49983bb8 3
+  s_4576ba6009af55::t_6d5fbf4fbc624e 92-97
+docs/AGENTS.md
+  s_4576ba6009af55::t_af1cca3b3ac14f 6
+  s_4576ba6009af55::t_172c23feb52f45 19
+  s_4576ba6009af55::t_3c14c4933e80fe 31
+  s_4576ba6009af55::t_03916143ef6e4c 72
+  s_4576ba6009af55::t_162eeaa92ff9f4 75-78
+index.html
+  s_4576ba6009af55::t_97aceb9b140593 21-22,24,27-34,41,45,47,50,56,61,69,71-72,75-77,82-84,88,90,92,100-103,108-110,118,121,130,132-135,144,146,152-153,155
+src/ui/poster.ts
+  s_4576ba6009af55::t_401bf239a0da68 26,33
+  s_4576ba6009af55::t_19a23f69c8f3c9 49,51-52,59
+  s_4576ba6009af55::t_9a2aa924e3fa13 6
+  s_4576ba6009af55::t_84d1e25e241871 68
+src/render/stage3d.ts
+  s_4576ba6009af55::t_a9ca084ac6f105 172
+  s_4576ba6009af55::t_0cd84fb43c58ae 184
+src/main.ts
+  s_4576ba6009af55::t_f048c18d2d3e2f 517
+  s_4576ba6009af55::t_fb13cc44d006ff 100
+  s_4576ba6009af55::t_67a46b13959b99 213
+  s_4576ba6009af55::t_e8eacf94c9e683 111-113
+  s_4576ba6009af55::t_38704cb77ec6f0 194
+  s_4576ba6009af55::t_d9d9235c145218 82
+  s_4576ba6009af55::t_9ff83c69abc44c 305,308
+  s_4576ba6009af55::t_ab4da755c26229 433,435,438,441,443
+  s_4576ba6009af55::t_f56e8e459e9f70 188
+  s_4576ba6009af55::t_b1885adef3ce2d 181
+  s_4576ba6009af55::t_2019a36cb74129 270
+  s_4576ba6009af55::t_1b8fea36cd250a 554-575,579-580
+  s_4576ba6009af55::t_95840b9939d3a0 171
+  s_4576ba6009af55::t_4dd04764c8de32 119,123
+  s_4576ba6009af55::t_16e96d98fabddb 21
+  s_4576ba6009af55::t_11790b8931f0f3 329
+  s_4576ba6009af55::t_b9185588487e9c 458-459
+  s_4576ba6009af55::t_aeb4658e0086bd 203
+  s_4576ba6009af55::t_e910de39024780 71-72
+  s_4576ba6009af55::t_07df41ebd5f3c9 148
+  s_4576ba6009af55::t_5c0eb81d8bd2ff 8
+src/ui/batch.ts
+  s_4576ba6009af55::t_56f4d88d74791c 114
+  s_4576ba6009af55::t_5cc43c464f1165 150
+  s_4576ba6009af55::t_ec60cb037fdfff 134
+  s_4576ba6009af55::t_d6fba259a640b9 9
+  s_4576ba6009af55::t_555a66b4a8711b 124
+  s_4576ba6009af55::t_e7707beac14d02 52-53,60,64,69-70,77-78,81
+src/ui/compare.ts
+  s_4576ba6009af55::t_db9850b8769bf8 4
+  s_4576ba6009af55::t_15684d9440de63 32,34,37
+src/state/store.ts
+  s_4576ba6009af55::t_f7735c8be4da09 13
+src/ui/paletteSearch.ts
+  s_4576ba6009af55::t_7090aec8c8291d 45
+  s_4576ba6009af55::t_563e9712ee385c 3
+src/render/poster.ts
+  s_4576ba6009af55::t_542de7474f22ab 40
+  s_4576ba6009af55::t_291aaa5066aa3f 80
+  s_4576ba6009af55::t_432f307127d0fb 65
+  s_4576ba6009af55::t_3792c48084cc9b 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.33",
+  "base_commit_sha": "d3248cdef5a3d801efbec2a422dbae7dc5c20d17",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
