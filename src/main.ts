@@ -563,3 +563,15 @@ $('budgetHint').textContent = '不限';
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });
+
+// 画布容器尺寸变化（如移动端编辑工具条出现/收起改变文档流高度）时重渲染
+// 保持用户缩放：适配模式下重新 fit，手动缩放过的只重绘
+let lastCw = 0, lastCh = 0;
+new ResizeObserver(() => {
+  const s = store.get();
+  const cw = gridCanvas.clientWidth, ch = gridCanvas.clientHeight;
+  if (!s.blueprint || (cw === lastCw && ch === lastCh)) return;
+  lastCw = cw; lastCh = ch;
+  if (s.scale === 0) grid.fit(s);
+  grid.render(s);
+}).observe(gridCanvas);
