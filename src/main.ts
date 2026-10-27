@@ -478,6 +478,8 @@ setupCompare({
   openBtn: $('compareBtn'),
   overlay: $('compareOverlay'),
   closeBtn: $('compareClose'),
+  stage: $('cmpStage'),
+  divider: $('cmpDivider'),
   srcCanvas: $<HTMLCanvasElement>('cmpSrc'),
   bpCanvas: $<HTMLCanvasElement>('cmpBp'),
   bpLabel: $('cmpBpLabel'),

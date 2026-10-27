@@ -247,24 +247,37 @@ aside::-webkit-scrollbar-track, .pal-list::-webkit-scrollbar-track, .pal-search:
 .poster-scroll { overflow: auto; padding: 12px; background: #2a2a2a; display: flex; justify-content: center; }
 #posterImg { display: block; max-width: 64vw; max-height: 74vh; height: auto; border-radius: 4px; }
 
-/* ===== 原图对比弹层 ===== */
+/* ===== 原图对比滑块弹层 ===== */
 .compare-box {
   background: var(--panel); border: 1px solid var(--line2); border-radius: 10px;
   max-width: 94vw; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
 }
-.compare-scroll {
-  display: flex; gap: 16px; padding: 16px; overflow: auto;
-  align-items: stretch; height: min(74vh, 720px);
+.cmp-stage { position: relative; margin: 14px auto 6px; touch-action: none; cursor: ew-resize;
+  border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--bg); }
+.cmp-stage canvas { position: absolute; inset: 0; display: block; }
+.cmp-divider {
+  position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; z-index: 3;
+  background: var(--teal); box-shadow: 0 0 6px rgba(0, 200, 200, .8);
+  transform: translateX(-1px); pointer-events: none;
 }
-.compare-scroll figure { margin: 0; display: flex; flex-direction: column; min-height: 0; }
-.compare-scroll figcaption { color: var(--txt2); font-size: 12px; margin-bottom: 6px; text-align: center; letter-spacing: .06em; }
-.compare-scroll canvas { display: block; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; }
+.cmp-handle {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: var(--teal); color: #04262b; border-radius: 50%;
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; letter-spacing: 0; pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+}
+.cmp-tag {
+  position: absolute; top: 8px; z-index: 2; pointer-events: none;
+  background: rgba(10, 16, 24, .72); color: var(--txt2);
+  font-family: var(--font-d); font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  padding: 3px 8px; border-radius: 3px;
+}
+.cmp-tag.l { left: 8px; }
+.cmp-tag.r { right: 8px; }
+.cmp-note { text-align: center; color: var(--txt3); font-size: 11px; letter-spacing: .06em; padding: 6px 0 12px; }
 #compareHint { font-weight: 400; letter-spacing: 0; color: var(--txt3); }
-@media (max-width: 820px) {
-  .compare-scroll { flex-direction: column; height: auto; max-height: 74vh; }
-  .compare-scroll canvas { max-width: 84vw; height: auto !important; }
-}
 
 /* ===== 画布角标 / 小按钮 ===== */
 #zoomPct {

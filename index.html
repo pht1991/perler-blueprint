@@ -148,10 +148,14 @@
         <div class="spacer"></div>
         <button class="btn" id="compareClose">关闭</button>
       </div>
-      <div class="compare-scroll">
-        <figure><figcaption>原图</figcaption><canvas id="cmpSrc"></canvas></figure>
-        <figure><figcaption>图纸 <span id="cmpBpLabel"></span></figcaption><canvas id="cmpBp"></canvas></figure>
+      <div class="cmp-stage" id="cmpStage">
+        <canvas id="cmpBp"></canvas>
+        <canvas id="cmpSrc"></canvas>
+        <div class="cmp-divider" id="cmpDivider"><span class="cmp-handle">◂▸</span></div>
+        <span class="cmp-tag l">原图</span>
+        <span class="cmp-tag r" id="cmpBpLabel">图纸</span>
       </div>
+      <div class="cmp-note">拖动中间分隔线，左右滑动对比原图与图纸</div>
     </div>
   </div>
 
