@@ -1,0 +1,26 @@
+package.json
+  s_4576ba6009af55::t_efb9841f3aa26c 7
+LICENSE
+  s_4576ba6009af55::t_1427224c42c651 1-21
+README.md
+  s_4576ba6009af55::t_90a77d3134cc4a 1-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "fbf4d61915dd4eaf801f8725a0fcfbfb7b23a608",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
