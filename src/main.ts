@@ -314,23 +314,29 @@ document.querySelectorAll('.view-btn').forEach((b) => b.addEventListener('click'
   document.querySelectorAll('.view-btn').forEach((x) => x.classList.remove('active'));
   b.classList.add('active'); setView(b.getAttribute('data-view') as ViewMode);
 }));
-$('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); renderActive(); });
+/** 视图/操作区开关按钮状态（镜像/色号/像素图/立体分层），统一从 store 同步 */
+function syncViewOps() {
+  const s = store.get();
+  $('mirrorBtn').classList.toggle('active', s.mirror);
+  $('codesBtn').classList.toggle('active', s.showCodes);
+  $('pixelBtn').classList.toggle('active', s.pixelView);
+  $('depthBtn').classList.toggle('active', s.depth3d);
+}
+$('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); syncViewOps(); renderActive(); });
 $('codesBtn').addEventListener('click', () => {
-  const on = !store.get().showCodes;
-  store.set({ showCodes: on });
-  $('codesBtn').classList.toggle('active', on);
+  store.set({ showCodes: !store.get().showCodes });
+  syncViewOps();
   renderActive();
 });
 $('pixelBtn').addEventListener('click', () => {
-  const on = !store.get().pixelView;
-  store.set({ pixelView: on });
-  $('pixelBtn').classList.toggle('active', on);
+  store.set({ pixelView: !store.get().pixelView });
+  syncViewOps();
   renderActive();
 });
 $('depthBtn').addEventListener('click', () => {
   const on = !store.get().depth3d;
   store.set({ depth3d: on });
-  $('depthBtn').classList.toggle('active', on);
+  syncViewOps();
   renderActive();
   if (on && store.get().view !== 'stage') toast(t('t.depthHint'));
 });
@@ -573,7 +579,7 @@ onLangChange(() => {
   syncLangBtn();
   applyDefaultTitle();
   buildSizeGrid(); buildPaletteList(); buildColorList();
-  syncToolUI(); syncIsland();
+  syncToolUI(); syncIsland(); syncViewOps();
   const mc = store.get().maxColors;
   $('budgetHint').textContent = mc === 0 ? t('ui.unlimited') : t('ui.budgetN', { n: mc });
   renderActive();
@@ -584,7 +590,7 @@ buildSizeGrid();
 buildPaletteList();
 $('budgetHint').textContent = t('ui.unlimited');
 $('taskTitle').textContent = store.get().title || t('app.title');
-$('codesBtn').classList.toggle('active', store.get().showCodes);
+syncViewOps();
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });
