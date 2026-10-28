@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "拼豆（Perler/Fuse Bead）交互图纸生成器：上传图片 → 量化到拼豆色板 → 生成 2D/3D 图纸，可保存为随身单文件 HTML。",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
