@@ -35,6 +35,8 @@ const dict: Record<string, Entry> = {
   'ui.viewGrid': ['平面', 'Flat'],
   'ui.viewStage': ['3D 豆板', '3D Board'],
   'ui.mirror': ['镜像', 'Mirror'],
+  'ui.codes': ['色号', 'Codes'],
+  'ui.codesTip': ['在格子里标注色号（放大后可见）', 'Print color codes in cells (visible when zoomed in)'],
   'ui.pixel': ['像素图', 'Pixels'],
   'ui.pixelTip': ['纯色块平面渲染，方便对照原图检查', 'Flat solid-cell view, handy for checking against the photo'],
   'ui.depth': ['立体分层', 'Depth'],

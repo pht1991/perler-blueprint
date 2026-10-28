@@ -10,6 +10,7 @@ export interface AppState {
   paletteId: string;
   maxColors: number;       // 0 = 不限（用完整色板）
   mirror: boolean;
+  showCodes: boolean;      // 2D 格子内印色号（格子够大才显示）
   pixelView: boolean;      // 2D 像素视图：纯色块平面渲染（无珠子立体感）
   depth3d: boolean;        // 3D 分层模式：深度启发式堆叠（false = 平面挤出）
   scale: number;           // 每格像素（CSS px）
@@ -32,6 +33,7 @@ class Store {
     paletteId: '',
     maxColors: 0,
     mirror: false,
+    showCodes: true,
     pixelView: false,
     depth3d: false,
     scale: 0,

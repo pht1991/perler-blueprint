@@ -1,7 +1,7 @@
 import type { AppState } from '../state/store';
 import type { BeadColor, Palette } from '../core/types';
 
-/** 2D 拼豆图纸渲染：每格一个珠子色块，支持镜像、高亮/已完成标记。 */
+/** 2D 拼豆图纸渲染：每格一个珠子色块，支持镜像、色号标注、高亮/已完成标记。 */
 export class GridRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -87,6 +87,22 @@ export class GridRenderer {
           ctx.lineTo(gx + cell * 0.45, gy + cell * 0.68);
           ctx.lineTo(gx + cell * 0.74, gy + cell * 0.32);
           ctx.stroke();
+        }
+
+        // 色号标注：格子足够大才印（小格子印字会糊成一片），像素视图不印
+        if (s.showCodes && !s.pixelView && cell >= 13) {
+          const fontSize = Math.min(cell * 0.4, (cell * 1.7) / Math.max(2, code.length));
+          ctx.font = `600 ${fontSize}px Rajdhani, "Segoe UI", sans-serif`;
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          const cx = gx + cell / 2, cy = gy + cell / 2;
+          const [r, g, b] = color.rgb;
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+          const fill = lum > 150 ? 'rgba(0,0,0,0.72)' : 'rgba(255,255,255,0.95)';
+          const stroke = lum > 150 ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)';
+          ctx.lineWidth = Math.max(1, fontSize / 8);
+          ctx.strokeText(code, cx, cy);
+          ctx.fillStyle = fill;
+          ctx.fillText(code, cx, cy);
         }
       }
     }

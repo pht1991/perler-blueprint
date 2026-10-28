@@ -79,8 +79,8 @@ aside {
 .budget-row { display: flex; flex-direction: column; gap: 6px; }
 #budgetSlider { width: 100%; accent-color: var(--red); }
 
-.opt-row { display: flex; gap: 8px; margin-bottom: 8px; }
-.opt-row .btn { flex: 1; }
+.opt-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.opt-row .btn { flex: 1 1 calc(50% - 4px); }
 
 .color-item {
   display: flex; align-items: center; gap: 8px; padding: 5px 8px; border: 1px solid var(--line);

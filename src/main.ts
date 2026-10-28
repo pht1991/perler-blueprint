@@ -315,6 +315,12 @@ document.querySelectorAll('.view-btn').forEach((b) => b.addEventListener('click'
   b.classList.add('active'); setView(b.getAttribute('data-view') as ViewMode);
 }));
 $('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); renderActive(); });
+$('codesBtn').addEventListener('click', () => {
+  const on = !store.get().showCodes;
+  store.set({ showCodes: on });
+  $('codesBtn').classList.toggle('active', on);
+  renderActive();
+});
 $('pixelBtn').addEventListener('click', () => {
   const on = !store.get().pixelView;
   store.set({ pixelView: on });
@@ -578,6 +584,7 @@ buildSizeGrid();
 buildPaletteList();
 $('budgetHint').textContent = t('ui.unlimited');
 $('taskTitle').textContent = store.get().title || t('app.title');
+$('codesBtn').classList.toggle('active', store.get().showCodes);
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });
