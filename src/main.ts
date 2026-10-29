@@ -5,6 +5,7 @@ import { store } from './state/store';
 import type { AppState, ViewMode } from './state/store';
 import { installMemStorageFallback, saveProgress, loadProgress, saveBlueprint, loadBlueprint, saveSrcImg, loadSrcImg } from './persist/storage';
 import { restoreFromEmbedded, saveFileExport } from './persist/saveFile';
+import { decodeLinkPayload } from './persist/linkImport';
 import { initI18n, t, getLang, setLang, onLangChange } from './i18n';
 import { track } from './analytics';
 import { GridRenderer } from './render/grid2d';
@@ -601,12 +602,38 @@ onLangChange(() => {
   renderActive();
 });
 
+/** URL 导入：#p= 链接（小程序「复制电脑端链接」生成），导入后清掉 hash 防刷新重复导入 */
+function importFromHash() {
+  const m = location.hash.match(/^#p=(.+)$/);
+  if (!m) return;
+  let bp = null;
+  try { bp = decodeLinkPayload(decodeURIComponent(m[1])); } catch (e) { /* 坏编码按无效处理 */ }
+  history.replaceState(null, '', location.pathname + location.search);
+  if (!bp) { toast(t('t.importBad')); return; }
+  let title = t('t.importTitle');
+  let k = 2;
+  while (localStorage.getItem(`perler-blueprint-${encodeURIComponent(title)}`)) title = `${t('t.importTitle')} ${k++}`;
+  store.set({ title, paletteId: bp.paletteId, blueprint: bp, done: new Set() });
+  $('taskTitle').textContent = title;
+  usedMap = countUsed(store.get());
+  baseCodes = bp.codes.slice();
+  editor.reset();
+  saveBlueprint(store.get());
+  renderActive();
+  buildColorList();
+  syncToolUI();
+  syncIsland();
+  toast(t('t.imported'));
+  track('import-link', `${bp.w}x${bp.h}`);
+}
+
 // ---- init ----
 buildSizeGrid();
 buildPaletteList();
 $('budgetHint').textContent = t('ui.unlimited');
 $('taskTitle').textContent = store.get().title || t('app.title');
 syncViewOps();
+importFromHash();
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });
