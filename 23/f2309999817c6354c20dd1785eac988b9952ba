@@ -1,0 +1,27 @@
+src/main.ts
+  s_4576ba6009af55::t_e2c1f08c5f103f 8
+  s_4576ba6009af55::t_93240f0549686d 605-629,636
+src/i18n.ts
+  s_4576ba6009af55::t_c52ea42b396d60 105-107
+src/persist/linkImport.ts
+  s_4576ba6009af55::t_0acdf3856cd311 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "23f2309999817c6354c20dd1785eac988b9952ba",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
