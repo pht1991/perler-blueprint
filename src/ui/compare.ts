@@ -2,6 +2,7 @@ import { store } from '../state/store';
 import type { Palette } from '../core/types';
 import { loadSrcImg } from '../persist/storage';
 import { t } from '../i18n';
+import { track } from '../analytics';
 
 // [COMPARE] 原图对比滑块：原图与图纸两层画布同尺寸叠放，
 // 中间一条可拖动分隔线（Pointer Events，鼠标/触屏通吃），
@@ -33,6 +34,7 @@ export function setupCompare(opts: {
     const dataUrl = loadSrcImg(s);
     if (!dataUrl) { toast(t('t.noSrcImg')); return; }
     lastDataUrl = dataUrl;
+    track('compare');
     hint.textContent = s.title;
     bpLabel.textContent = `${t('ui.pattern')} ${s.blueprint.w}×${s.blueprint.h} · ${palette().label}`;
     setPct(50);

@@ -6,6 +6,7 @@ import type { AppState, ViewMode } from './state/store';
 import { installMemStorageFallback, saveProgress, loadProgress, saveBlueprint, loadBlueprint, saveSrcImg, loadSrcImg } from './persist/storage';
 import { restoreFromEmbedded, saveFileExport } from './persist/saveFile';
 import { initI18n, t, getLang, setLang, onLangChange } from './i18n';
+import { track } from './analytics';
 import { GridRenderer } from './render/grid2d';
 import { StageRenderer } from './render/stage3d';
 import { generateFromImage } from './ui/upload';
@@ -88,6 +89,7 @@ function buildSizeGrid() {
 function selectSize(n: number) {
   store.set({ size: n });
   buildSizeGrid();
+  track('size', String(n));
   if (currentFile) regen();
 }
 
@@ -98,7 +100,7 @@ function buildPaletteList() {
     const el = document.createElement('button');
     el.className = 'pal-btn' + (p.id === store.get().paletteId ? ' active' : '');
     el.innerHTML = `<span>${p.label}</span><span class="sub">${t('list.colors', { n: p.colors.length })}</span>`;
-    el.onclick = () => { store.set({ paletteId: p.id }); buildPaletteList(); regen(); };
+    el.onclick = () => { store.set({ paletteId: p.id }); buildPaletteList(); track('palette', p.id); regen(); };
     wrap.appendChild(el);
   }
 }
@@ -179,6 +181,7 @@ $('islandAllBtn').addEventListener('click', () => {
   saveBlueprint(s); saveProgress(s);
   renderActive(); buildColorList(); syncIsland();
   toast(t('t.islandCleared', { n: idx.length }));
+  track('island-clear');
 });
 
 // ---- 恢复初始图纸 ----
@@ -192,6 +195,7 @@ $('edRestore').addEventListener('click', () => {
   saveBlueprint(s); saveProgress(s);
   renderActive(); buildColorList(); syncIsland(); syncToolUI();
   toast(t('t.restored'));
+  track('reset');
 });
 
 // ---- 用量清单：全部标记已拼 / 清除 ----
@@ -211,6 +215,7 @@ async function onUpload(file: File) {
   $('taskTitle').textContent = store.get().title;
   await regen();
   toast(t('t.generated'));
+  track('upload', `${store.get().size}/${store.get().paletteId}`);
 }
 
 async function regen() {
@@ -274,6 +279,7 @@ async function restoreSrcImg() {
 // ---- 视图 / 效果 ----
 function setView(v: ViewMode) {
   store.set({ view: v });
+  track('view', v);
   $('view-grid').classList.toggle('active', v === 'grid');
   $('view-stage').classList.toggle('active', v === 'stage');
   // 3D 画布刚从 display:none 变可见：重算尺寸 + 机位，否则找不到图
@@ -322,21 +328,24 @@ function syncViewOps() {
   $('pixelBtn').classList.toggle('active', s.pixelView);
   $('depthBtn').classList.toggle('active', s.depth3d);
 }
-$('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); syncViewOps(); renderActive(); });
+$('mirrorBtn').addEventListener('click', () => { store.set({ mirror: !store.get().mirror }); syncViewOps(); track('mirror'); renderActive(); });
 $('codesBtn').addEventListener('click', () => {
   store.set({ showCodes: !store.get().showCodes });
   syncViewOps();
+  track('codes');
   renderActive();
 });
 $('pixelBtn').addEventListener('click', () => {
   store.set({ pixelView: !store.get().pixelView });
   syncViewOps();
+  track('pixel');
   renderActive();
 });
 $('depthBtn').addEventListener('click', () => {
   const on = !store.get().depth3d;
   store.set({ depth3d: on });
   syncViewOps();
+  track('depth');
   renderActive();
   if (on && store.get().view !== 'stage') toast(t('t.depthHint'));
 });
@@ -453,6 +462,7 @@ function setTool(tool: Tool) {
     toast(t('t.autoPick', { code: top }));
   }
   store.set({ tool: store.get().tool === tool ? null : tool });
+  track('tool', store.get().tool ?? 'off');
   syncToolUI();
 }
 $('edBar').querySelectorAll<HTMLButtonElement>('[data-tool]').forEach((b) => {
@@ -529,6 +539,8 @@ bs.addEventListener('input', (e) => {
   $('budgetHint').textContent = v === 0 ? t('ui.unlimited') : t('ui.budgetN', { n: v });
   if (currentFile) regen();
 });
+// 松手才上报，避免拖动过程连发
+bs.addEventListener('change', () => track('budget', String(bs.value)));
 
 // store 订阅：标题/视图等轻量同步
 store.subscribe((s, changed) => {
@@ -573,7 +585,11 @@ function applyDefaultTitle() {
   $('taskTitle').textContent = store.get().title || t('app.title');
 }
 function syncLangBtn() { $('langBtn').textContent = getLang() === 'zh' ? 'EN' : '中'; }
-$('langBtn').addEventListener('click', () => setLang(getLang() === 'zh' ? 'en' : 'zh'));
+$('langBtn').addEventListener('click', () => {
+  const target = getLang() === 'zh' ? 'en' : 'zh';
+  setLang(target);
+  track('lang', target);
+});
 syncLangBtn();
 onLangChange(() => {
   syncLangBtn();

@@ -4,6 +4,7 @@ import { store } from '../state/store';
 import { PALETTE_BY_ID } from '../data/palettes';
 import { shareOrDownload, canvasToPngFile } from './share';
 import { t, dateLocale } from '../i18n';
+import { track } from '../analytics';
 
 export interface PosterHandles {
   openBtn: HTMLElement;
@@ -38,6 +39,7 @@ export function setupPoster(h: PosterHandles) {
   h.openBtn.addEventListener('click', () => {
     const cv = build(); if (!cv) return;
     lastCanvas = cv;
+    track('poster-open');
     h.img.src = cv.toDataURL('image/png');
     h.overlay.hidden = false;
   });
@@ -47,6 +49,7 @@ export function setupPoster(h: PosterHandles) {
   h.shareBtn.addEventListener('click', async () => {
     if (!lastCanvas) return;
     const file = await canvasToPngFile(lastCanvas, `${t('file.poster')}${store.get().title}.png`);
+    track('poster-share');
     const r = await shareOrDownload(file);
     if (r === 'shared') h.toast(t('t.sharedPoster'));
     else if (r === 'downloaded') h.toast(t('t.fallbackDownload'));
@@ -54,6 +57,7 @@ export function setupPoster(h: PosterHandles) {
 
   h.dlPng.addEventListener('click', () => {
     if (!lastCanvas) return;
+    track('poster-png');
     const a = document.createElement('a');
     a.href = lastCanvas.toDataURL('image/png');
     a.download = `${t('file.poster')}${store.get().title}.png`;
@@ -62,6 +66,7 @@ export function setupPoster(h: PosterHandles) {
 
   h.dlPdf.addEventListener('click', () => {
     if (!lastCanvas) return;
+    track('poster-pdf');
     const cv = lastCanvas;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [cv.width, cv.height] });
     pdf.addImage(cv.toDataURL('image/png'), 'PNG', 0, 0, cv.width, cv.height);

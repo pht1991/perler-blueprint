@@ -6,6 +6,8 @@
 
 ![3D 豆板](docs/screenshots/3d-board.jpg)
 
+> **关于统计**：本站使用 [GoatCounter](https://www.goatcounter.com/) 收集匿名访问与功能使用事件（仅事件名、语言、设备类型，**不含图片内容与任何用户输入**，无 cookie）。介意的话拦截 `gc.zgo.at` 即可彻底关闭；导出的单文件 HTML 不带任何统计。
+
 ## 功能
 
 - **上传图片 → 自动生成图纸**：内置 MARD / COCO / 漫漫 / Perler / Hama / Artkal 等 25 块真实色板共 3759 色，Lab 色彩空间最近色匹配

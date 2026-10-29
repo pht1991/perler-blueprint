@@ -7,6 +7,7 @@ import { generateFromImage } from './upload';
 import { drawPoster } from '../render/poster';
 import { shareOrDownload, downloadFile } from './share';
 import { t, dateLocale } from '../i18n';
+import { track } from '../analytics';
 
 export interface BatchHandles {
   openBtn: HTMLElement;    // 批量导出（下载 PDF + CSV）
@@ -51,6 +52,7 @@ export function setupBatch(h: BatchHandles) {
   h.openBtn.addEventListener('click', async () => {
     if (!store.get().blueprint) { h.toast(t('t.needBlueprint')); return; }
     h.toast(t('t.batchWorking'));
+    track('batch-export');
     try {
       const results = await generateAll();
       const palette = PALETTE_BY_ID[store.get().paletteId]!;
@@ -68,6 +70,7 @@ export function setupBatch(h: BatchHandles) {
   h.shareBtn.addEventListener('click', async () => {
     if (!store.get().blueprint) { h.toast(t('t.needBlueprint')); return; }
     h.toast(t('t.batchWorking'));
+    track('batch-share');
     try {
       const results = await generateAll();
       const palette = PALETTE_BY_ID[store.get().paletteId]!;
