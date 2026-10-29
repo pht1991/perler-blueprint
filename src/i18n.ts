@@ -11,6 +11,8 @@ const dict: Record<string, Entry> = {
   'app.title': ['拼豆图纸', 'Perler Blueprint'],
   'ui.rename': ['改名', 'Rename'],
   'ui.subtitle': ['上传图片 · 生成拼豆图纸', 'Upload an image · make a bead pattern'],
+  'ui.footerSite': ['Indie Lab · 主站', 'Indie Lab · main site'],
+  'ui.footerRepo': ['GitHub 开源仓库', 'GitHub repository'],
   'ui.upload': ['上传图片', 'Upload'],
   'ui.compare': ['对比', 'Compare'],
   'ui.compareTip': ['原图与图纸并排对照', 'Compare photo & pattern side by side'],
