@@ -1,0 +1,54 @@
+README.md
+  s_4576ba6009af55::t_2f919ed5ddb80b 9-10
+src/persist/saveFile.ts
+  s_4576ba6009af55::t_a391720c82b6e1 98
+  s_4576ba6009af55::t_553549eee4553d 4
+src/analytics.ts
+  s_4576ba6009af55::t_df570e556a629d 1-55
+src/ui/poster.ts
+  s_4576ba6009af55::t_0f91bbac5f7652 42
+  s_4576ba6009af55::t_12395337214363 52
+  s_4576ba6009af55::t_2c7a323cb2a7d6 7
+  s_4576ba6009af55::t_3d8f07225820ec 60
+  s_4576ba6009af55::t_0c567dc87620ae 69
+src/main.ts
+  s_4576ba6009af55::t_ec5cefdf1d4334 218
+  s_4576ba6009af55::t_537649e0e8395d 282
+  s_4576ba6009af55::t_f74acf1c0413f9 331,335,341,348
+  s_4576ba6009af55::t_fe92fc371c5f66 465
+  s_4576ba6009af55::t_40475766cbc00c 184
+  s_4576ba6009af55::t_894727079ecea1 92
+  s_4576ba6009af55::t_111544b7471ad6 198
+  s_4576ba6009af55::t_a65f5833a0d64f 9
+  s_4576ba6009af55::t_a59d7592895240 103
+  s_4576ba6009af55::t_730f04ad8249ee 542-543
+  s_4576ba6009af55::t_92c5332d730bcf 588-592
+src/ui/batch.ts
+  s_4576ba6009af55::t_01099560671bf1 10
+  s_4576ba6009af55::t_82e8652d6d7bc2 73
+  s_4576ba6009af55::t_692f16c90c8fcf 55
+src/ui/compare.ts
+  s_4576ba6009af55::t_8724dfa4de45bb 5
+  s_4576ba6009af55::t_2b9e001741e1cf 37
+index.html
+  s_4576ba6009af55::t_230eca26250c31 164-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "c4010af8cb3018fff43094cf4565d90c9d4f77de",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
