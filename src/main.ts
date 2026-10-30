@@ -13,6 +13,7 @@ import { StageRenderer } from './render/stage3d';
 import { generateFromImage } from './ui/upload';
 import { Editor } from './ui/editor';
 import { setupPoster } from './ui/poster';
+import { setupGridExport } from './ui/gridExport';
 import { setupCompare } from './ui/compare';
 import { setupPaletteSearch } from './ui/paletteSearch';
 import { setupBatch } from './ui/batch';
@@ -512,6 +513,11 @@ setupPoster({
   dlPdf: $('posterDlPdf'),
   closeBtn: $('posterClose'),
   getUsed: () => usedMap,
+  toast,
+});
+setupGridExport({
+  openBtn: $('gridDlBtn'),
+  getDone: () => store.get().done,
   toast,
 });
 setupPaletteSearch({

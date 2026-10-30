@@ -81,6 +81,10 @@ const dict: Record<string, Entry> = {
   'ui.shareSaveTip': ['PNG 走系统分享面板，iOS 可「存储图像」直接进相册', 'PNG via the system share sheet; on iOS choose "Save Image" for Photos'],
   'ui.dlPng': ['下载 PNG', 'Download PNG'],
   'ui.dlPdf': ['下载 PDF', 'Download PDF'],
+  'ui.gridDl': ['导出图纸', 'Export Grid'],
+  'ui.gridDlTip': ['带色号与网格线的可打印图纸 PNG（含已拼勾标记）', 'Printable grid PNG with codes, gridlines and done-marks'],
+  'ui.gridDlShared': ['已保存图纸', 'Grid saved'],
+  'ui.gridDlDone': ['图纸已下载', 'Grid downloaded'],
 
   // ---- 对比弹层 ----
   'ui.compareTitle': ['原图对比', 'Photo Compare'],
