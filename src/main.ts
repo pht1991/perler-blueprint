@@ -1,4 +1,5 @@
 import './styles/main.css';
+import mpCodeUrl from './assets/wxacode.jpg';
 import { PALETTES, PALETTE_BY_ID } from './data/palettes';
 import { SIZES, DEFAULT_SIZE } from './data/sizes';
 import { store } from './state/store';
@@ -655,3 +656,14 @@ new ResizeObserver(() => {
   if (s.scale === 0) grid.fit(s);
   grid.render(s);
 }).observe(gridCanvas);
+
+// 小程序推广弹层（footer 入口）
+const mpOverlay = $('mpOverlay');
+$('mpEntry').addEventListener('click', () => {
+  $('mpCodeImg').setAttribute('src', mpCodeUrl);
+  mpOverlay.hidden = false;
+  track('mp-overlay');
+});
+$('mpClose').addEventListener('click', () => { mpOverlay.hidden = true; });
+mpOverlay.addEventListener('click', (e) => { if (e.target === mpOverlay) mpOverlay.hidden = true; });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') mpOverlay.hidden = true; });

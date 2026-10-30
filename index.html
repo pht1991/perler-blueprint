@@ -130,7 +130,21 @@
     <a href="https://phtbyte.com" target="_blank" rel="noopener" data-i18n-title="ui.footerSite" title="Indie Lab · 主站">Indie Lab</a>
     <span>·</span>
     <a href="https://github.com/pht1991/perler-blueprint" target="_blank" rel="noopener" data-i18n-title="ui.footerRepo" title="GitHub 开源仓库">GitHub</a>
+    <span>·</span>
+    <a id="mpEntry" data-i18n="ui.footerMp" data-i18n-title="ui.footerMpTip" title="扫码或搜一搜打开小程序">微信小程序</a>
   </footer>
+
+  <div class="overlay" id="mpOverlay" hidden>
+    <div class="mp-box">
+      <button class="mp-close" id="mpClose" data-i18n-title="ui.close" title="关闭">✕</button>
+      <img id="mpCodeImg" data-i18n-alt="ui.mpCodeAlt" alt="我要拼豆图纸 · 小程序码">
+      <div class="mp-info">
+        <div class="mp-brand"><span class="mp-flower">✻</span> <span data-i18n="ui.mpBrand">微信搜一搜</span></div>
+        <div class="mp-search" title="小程序名称，微信搜索时请输入这个中文词"><span class="mp-magnifier"></span>我要拼豆图纸</div>
+        <div class="mp-tip" data-i18n="ui.mpTip">扫码或搜索打开小程序 · 图纸双端同步</div>
+      </div>
+    </div>
+  </div>
 
   <div class="overlay" id="posterOverlay" hidden>
     <div class="poster-box">

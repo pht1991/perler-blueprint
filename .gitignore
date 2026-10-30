@@ -3,3 +3,4 @@ node_modules/
 .workbuddy/
 *.local
 .DS_Store
+.playwright-cli/

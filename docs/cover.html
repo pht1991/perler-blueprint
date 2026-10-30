@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1000px; height: 420px; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #10161D 0%, #1B2733 100%);
+    color: #F5F2EA;
+    position: relative;
+  }
+  /* 豆板网格底纹 */
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(245,242,234,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,242,234,0.045) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .grid-bg::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, transparent 30%, rgba(16,22,29,0.85) 100%);
+  }
+  .text {
+    position: absolute; left: 56px; top: 50%;
+    transform: translateY(-50%);
+    width: 480px; z-index: 2;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 13px; font-weight: 600; letter-spacing: 2.5px;
+    color: #2FBFBF; border: 1px solid rgba(47,191,191,0.5);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 52px; line-height: 1.08; font-weight: 800;
+    letter-spacing: -0.5px; margin-bottom: 16px;
+  }
+  h1 .accent { color: #E8873A; }
+  .sub {
+    font-size: 17px; line-height: 1.5; color: rgba(245,242,234,0.72);
+    margin-bottom: 22px;
+  }
+  .sub b { color: #F5F2EA; font-weight: 600; }
+  .url {
+    font-size: 15px; font-weight: 600; color: rgba(47,191,191,0.95);
+    letter-spacing: 0.5px;
+  }
+  .shots { position: absolute; right: 0; top: 0; width: 470px; height: 420px; z-index: 1; }
+  .shot {
+    position: absolute; border-radius: 10px; overflow: hidden;
+    background: #fff;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+  }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .shot.poster {
+    width: 218px; height: 300px; right: 228px; top: 60px;
+    transform: rotate(-3.5deg);
+  }
+  .shot.sheet {
+    width: 300px; height: 300px; right: 36px; top: 42px;
+    transform: rotate(2.5deg);
+  }
+</style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="shots">
+    <div class="shot poster"><img src="cover-assets/poster.png"></div>
+    <div class="shot sheet"><img src="cover-assets/sheet.jpg"></div>
+  </div>
+  <div class="text">
+    <div class="tag">OPEN SOURCE · MIT</div>
+    <h1>Perler Bead<br><span class="accent">Blueprint Maker</span></h1>
+    <div class="sub">Photo → pattern → <b>one link</b> → print.<br>Web & WeChat, synced by URL.</div>
+    <div class="url">perler.phtbyte.com</div>
+  </div>
+</body>
+</html>

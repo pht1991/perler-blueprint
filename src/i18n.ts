@@ -13,6 +13,11 @@ const dict: Record<string, Entry> = {
   'ui.subtitle': ['上传图片 · 生成拼豆图纸', 'Upload an image · make a bead pattern'],
   'ui.footerSite': ['Indie Lab · 主站', 'Indie Lab · main site'],
   'ui.footerRepo': ['GitHub 开源仓库', 'GitHub repository'],
+  'ui.footerMp': ['微信小程序', 'WeChat Mini Program'],
+  'ui.footerMpTip': ['扫码或搜一搜打开小程序', 'Scan or search to open the mini program'],
+  'ui.mpBrand': ['微信搜一搜', 'Search on WeChat'],
+  'ui.mpCodeAlt': ['我要拼豆图纸 · 小程序码', '"woyaopindou tuzhi" mini program QR code'],
+  'ui.mpTip': ['扫码或搜索打开小程序 · 图纸双端同步', 'Scan or search to open · patterns sync across devices'],
   'ui.upload': ['上传图片', 'Upload'],
   'ui.compare': ['对比', 'Compare'],
   'ui.compareTip': ['原图与图纸并排对照', 'Compare photo & pattern side by side'],
@@ -204,6 +209,9 @@ export function applyStatic(): void {
   });
   document.querySelectorAll<HTMLElement>('[data-i18n-title]').forEach((el) => {
     el.title = t(el.dataset.i18nTitle!);
+  });
+  document.querySelectorAll<HTMLImageElement>('[data-i18n-alt]').forEach((el) => {
+    el.alt = t(el.dataset.i18nAlt!);
   });
   document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-i18n-ph]').forEach((el) => {
     el.placeholder = t(el.dataset.i18nPh!);
