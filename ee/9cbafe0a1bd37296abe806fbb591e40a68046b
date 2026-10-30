@@ -1,0 +1,43 @@
+docs/devto-post-2-url-sync.md
+  s_4576ba6009af55::t_c6e63bdc311872 1-110
+index.html
+  s_4576ba6009af55::t_918f6a9f4cbfc8 139-140,142-143
+  s_4576ba6009af55::t_dde49c40c7be42 133,137-138,141,144-147
+  s_4576ba6009af55::t_4d0f957c105eba 134
+  s_4576ba6009af55::t_a91f2b5f90997d 148
+src/main.ts
+  s_4576ba6009af55::t_cf935e6a866c42 667
+  s_4576ba6009af55::t_e2b3bb6cb08c18 2
+  s_4576ba6009af55::t_614e34052ef858 659-666,668-669
+.gitignore
+  s_4576ba6009af55::t_6350c909170aa8 6
+src/i18n.ts
+  s_4576ba6009af55::t_726aaf5fc4b76b 17,20
+  s_4576ba6009af55::t_326887636772ea 16,18-19
+  s_4576ba6009af55::t_18bea0e6262510 213-215
+src/styles/main.css
+  s_4576ba6009af55::t_a2ddd33150ec2d 54-56,58-61,67-83
+  s_4576ba6009af55::t_d686bb56cd2640 57,62-66
+docs/cover.html
+  s_4576ba6009af55::t_f932fd3ea48d6d 71-72
+  s_4576ba6009af55::t_a255a203ea09db 1-70,73-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "ee9cbafe0a1bd37296abe806fbb591e40a68046b",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
