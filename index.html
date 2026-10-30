@@ -31,6 +31,7 @@
     <button class="btn" id="batchShareBtn" data-i18n="ui.batchShare" data-i18n-title="ui.batchShareTip" title="合集 PDF 走系统分享面板（手机可存文件/发微信），不支持时降级下载">批量分享</button>
     <button class="btn" id="posterBtn" data-i18n="ui.poster">导出海报</button>
     <button class="btn" id="gridDlBtn" data-i18n="ui.gridDl" data-i18n-title="ui.gridDlTip" title="带色号与网格线的可打印图纸 PNG（含已拼勾标记）">导出图纸</button>
+    <button class="btn" id="phoneBtn" data-i18n="ui.phoneLink" data-i18n-title="ui.phoneLinkTip" title="复制链接发到手机，小程序内粘贴导入">手机打开</button>
     <button class="btn" id="flowExpBtn" data-i18n="ui.exportHtml">导出单文件</button>
     <button class="btn primary" id="edSave" data-i18n="ui.save">保存</button>
     <input type="file" id="fileInput" accept="image/*" hidden />
@@ -143,6 +144,31 @@
         <div class="mp-search" title="小程序名称，微信搜索时请输入这个中文词"><span class="mp-magnifier"></span>我要拼豆图纸</div>
         <div class="mp-tip" data-i18n="ui.mpTip">扫码或搜索打开小程序 · 图纸双端同步</div>
       </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="phoneOverlay" hidden>
+    <div class="link-box">
+      <button class="mp-close" id="phoneClose" data-i18n-title="ui.close" title="关闭">✕</button>
+      <div class="link-title" data-i18n="ui.phoneLink">手机打开</div>
+      <div class="code-area" id="phoneCodeArea" hidden>
+        <div class="code-big" id="phoneCode">·····</div>
+        <div class="code-steps">
+          <span data-i18n="ui.codeStep1">1. 打开小程序「我要拼豆图纸」</span>
+          <span data-i18n="ui.codeStep2">2. 首页点「导入电脑图纸」→「输入传输码」</span>
+          <span data-i18n="ui.codeStep3">3. 输入上面的 5 位码（24 小时内有效）</span>
+        </div>
+      </div>
+      <div class="link-steps" id="phoneSteps" hidden>
+        <span data-i18n="ui.phoneStep1">1. 复制下方链接，发到手机微信（如「文件传输助手」）</span>
+        <span data-i18n="ui.phoneStep2">2. 手机上复制该链接，打开小程序「我要拼豆图纸」</span>
+        <span data-i18n="ui.phoneStep3">3. 首页点「导入电脑图纸」→ 粘贴导入</span>
+      </div>
+      <div class="link-row">
+        <input id="phoneUrl" readonly />
+        <button class="btn primary" id="phoneCopy" data-i18n="ui.copyLink">复制链接</button>
+      </div>
+      <div class="mp-tip" id="phoneNote" data-i18n="ui.phoneNote">链接里包含完整图纸数据，不经服务器 · 图纸颜色超过 34 种时无法生成</div>
     </div>
   </div>
 

@@ -15,6 +15,7 @@ import { generateFromImage } from './ui/upload';
 import { Editor } from './ui/editor';
 import { setupPoster } from './ui/poster';
 import { setupGridExport } from './ui/gridExport';
+import { setupPhoneLink } from './ui/phoneLink';
 import { setupCompare } from './ui/compare';
 import { setupPaletteSearch } from './ui/paletteSearch';
 import { setupBatch } from './ui/batch';
@@ -521,6 +522,18 @@ setupGridExport({
   getDone: () => store.get().done,
   toast,
 });
+setupPhoneLink({
+  openBtn: $('phoneBtn'),
+  overlay: $('phoneOverlay'),
+  codeArea: $('phoneCodeArea'),
+  codeEl: $('phoneCode'),
+  stepsEl: $('phoneSteps'),
+  input: $<HTMLInputElement>('phoneUrl'),
+  noteEl: $('phoneNote'),
+  copyBtn: $('phoneCopy'),
+  closeBtn: $('phoneClose'),
+  toast,
+});
 setupPaletteSearch({
   toggleBtn: $('palSearchToggle'),
   panel: $('palSearchPanel'),
@@ -614,12 +627,16 @@ function importFromHash() {
   const m = location.hash.match(/^#p=(.+)$/);
   if (!m) return;
   let bp = null;
-  try { bp = decodeLinkPayload(decodeURIComponent(m[1])); } catch (e) { /* 坏编码按无效处理 */ }
+  try {
+    // v1 时代浏览器可能对 hash 做百分号编码，兜底解一次；v2 的 %XXXX 是名称自有编码，绝不能再解
+    const frag = m[1].startsWith('1.') ? decodeURIComponent(m[1]) : m[1];
+    bp = decodeLinkPayload(frag);
+  } catch (e) { /* 坏编码按无效处理 */ }
   history.replaceState(null, '', location.pathname + location.search);
   if (!bp) { toast(t('t.importBad')); return; }
-  let title = t('t.importTitle');
+  let title = bp.title || t('t.importTitle');
   let k = 2;
-  while (localStorage.getItem(`perler-blueprint-${encodeURIComponent(title)}`)) title = `${t('t.importTitle')} ${k++}`;
+  while (localStorage.getItem(`perler-blueprint-${encodeURIComponent(title)}`)) title = `${bp.title || t('t.importTitle')} ${k++}`;
   store.set({ title, paletteId: bp.paletteId, blueprint: bp, done: new Set() });
   $('taskTitle').textContent = title;
   usedMap = countUsed(store.get());

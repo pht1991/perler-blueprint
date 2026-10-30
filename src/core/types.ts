@@ -33,4 +33,5 @@ export interface Blueprint {
   paletteId: string;
   codes: (string | null)[];   // 长度 = w * h，行优先
   sourceName?: string;
+  title?: string;             // 链接/传输码导入时携带的原始名称（落库前会再处理）
 }
