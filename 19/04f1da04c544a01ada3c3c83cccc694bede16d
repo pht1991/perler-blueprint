@@ -1,0 +1,31 @@
+src/ui/gridExport.ts
+  s_4576ba6009af55::t_6c8b802d1e437a 1-33
+src/render/gridExport.ts
+  s_4576ba6009af55::t_a4e56cc3fb98d5 1-96
+src/i18n.ts
+  s_4576ba6009af55::t_df3c981c411b4a 84-87
+index.html
+  s_4576ba6009af55::t_fff32f2867e745 33
+src/main.ts
+  s_4576ba6009af55::t_40948349529c68 518-522
+  s_4576ba6009af55::t_93e0f070f8eab9 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "1904f1da04c544a01ada3c3c83cccc694bede16d",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
