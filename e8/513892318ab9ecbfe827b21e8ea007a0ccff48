@@ -1,0 +1,23 @@
+README.md
+  s_4576ba6009af55::t_cd5988df28ffe0 1-4,9-13,15-19,28,31,38-43
+  s_4576ba6009af55::t_5fa52dc8a46c4d 44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "e8513892318ab9ecbfe827b21e8ea007a0ccff48",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
