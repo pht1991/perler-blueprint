@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 680px; height: 300px; background: #0D131A; display: flex; align-items: center; justify-content: center; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+  .card {
+    width: 640px; height: 260px; border-radius: 18px; background: #141C24;
+    border: 1px solid #2A3644; display: flex; align-items: center; padding: 0 36px; gap: 32px;
+    position: relative; overflow: hidden;
+  }
+  /* 淡豆板网格底纹 */
+  .card::before {
+    content: ""; position: absolute; inset: 0; opacity: .05;
+    background-image: radial-gradient(circle, #7FB5C9 3.5px, transparent 3.5px);
+    background-size: 28px 28px;
+  }
+  .qr-wrap { position: relative; flex-shrink: 0; background: #fff; border-radius: 14px; padding: 12px; width: 216px; height: 216px; display: flex; align-items: center; justify-content: center; }
+  .qr-wrap img { width: 192px; height: 192px; display: block; }
+  .info { position: relative; display: flex; flex-direction: column; gap: 12px; }
+  .tag { display: inline-block; width: fit-content; font-size: 13px; letter-spacing: 2px; color: #4CC9E8; border: 1px solid #2A5B6B; border-radius: 999px; padding: 4px 14px; }
+  .name { font-size: 40px; font-weight: 700; color: #F2F6F9; letter-spacing: 1px; }
+  .sub { font-size: 16px; color: #8FA3B3; }
+  .sub b { color: #C8D6E0; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="qr-wrap"><img src="wxacode.jpg"></div>
+    <div class="info">
+      <span class="tag">微信小程序</span>
+      <span class="name">我要拼豆图纸</span>
+      <span class="sub">扫码打开 · 或微信搜一搜 <b>「我要拼豆图纸」</b></span>
+      <span class="sub" style="color:#5C7386;font-size:14px;">手机拼豆 · 图纸与电脑端互传同步</span>
+    </div>
+  </div>
+</body>
+</html>
