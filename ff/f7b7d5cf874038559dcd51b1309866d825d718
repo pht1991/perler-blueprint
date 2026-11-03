@@ -1,0 +1,25 @@
+docs/v2ex-post-2-update.md
+  s_4576ba6009af55::t_fd86c0ec8e24ed 1-32,39-45,47-49,51
+  s_4576ba6009af55::t_d4d339fe653667 33-38,46,50
+docs/entry-card.html
+  s_4576ba6009af55::t_47a399e402d551 1-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.37",
+  "base_commit_sha": "fff7b7d5cf874038559dcd51b1309866d825d718",
+  "prompts": {},
+  "sessions": {
+    "s_4576ba6009af55": {
+      "agent_id": {
+        "tool": "workbuddy",
+        "id": "c97c33f9-04d5-4442-be2f-53c42fa7265e",
+        "model": "glm-5.3-flash"
+      },
+      "human_author": "panhaitao-9ap2u <panhaitao@sdpjw.com>",
+      "custom_attributes": {
+        "internal_commit_event_allowlist": "codeup.aliyun.com,codeup-*"
+      }
+    }
+  }
+}
