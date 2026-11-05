@@ -52,6 +52,14 @@ main { flex: 1; display: flex; min-height: 0; }
 .site-footer a:hover { color: var(--red); }
 .site-footer span { color: var(--txt3); opacity: .55; }
 
+/* 英文产品说明（面向 AI 爬虫与海外用户：中文界面隐藏，英文界面显示；爬虫读原始 HTML 恒可见） */
+.about-en {
+  flex-shrink: 0; max-width: 760px; margin: 0 auto; padding: 2px 16px 6px;
+  font-size: 11px; line-height: 1.7; text-align: center;
+  color: var(--txt3); opacity: .75; font-family: var(--font-d);
+}
+html[lang="zh-CN"] .about-en { display: none; }
+
 /* 小程序推广弹层（footer 入口点击弹出，仿官方搜一搜物料） */
 .mp-box {
   position: relative;
@@ -210,6 +218,7 @@ aside {
 /* ===== 移动端适配（≤820px：上下布局 + 触控优化） ===== */
 @media (max-width: 820px) {
   .site-footer { padding: 3px 8px; font-size: 11px; gap: 8px; }
+  .about-en { font-size: 10px; padding: 2px 12px 4px; }
   /* header：标题一行，按钮一行横向滚动 */
   header {
     flex-wrap: wrap; height: auto; min-height: 56px;
