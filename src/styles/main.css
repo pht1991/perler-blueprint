@@ -60,6 +60,8 @@ main { flex: 1; display: flex; min-height: 0; }
   color: var(--txt3); opacity: .75; font-family: var(--font-d);
 }
 html[lang="zh-CN"] .about-en { display: none; }
+/* 仅英文界面可见的入口（PeerPush 回链等，中文用户无感知；HTML 恒存在供爬虫验证） */
+html[lang="zh-CN"] .en-only { display: none; }
 /* 英文界面：说明居左、入口居右；中文界面 footer 保持纯入口居中 */
 html[lang="en"] .site-footer { justify-content: space-between; gap: 24px; }
 
