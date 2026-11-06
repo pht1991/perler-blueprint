@@ -4,3 +4,8 @@ node_modules/
 *.local
 .DS_Store
 .playwright-cli/
+
+# 营销文章草稿与配图（仅本地保留，不上传 GitHub）
+drafts/
+# 内部项目记忆（不公开）
+/docs/AGENTS.md
