@@ -46,6 +46,7 @@ main { flex: 1; display: flex; min-height: 0; }
   flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 10px;
   padding: 5px 12px; font-size: 12px; font-family: var(--font-d);
 }
+.footer-links { display: flex; align-items: center; gap: 10px; }
 .site-footer a {
   color: var(--txt3); text-decoration: none; letter-spacing: .6px; transition: color .15s;
 }
@@ -54,11 +55,13 @@ main { flex: 1; display: flex; min-height: 0; }
 
 /* 英文产品说明（面向 AI 爬虫与海外用户：中文界面隐藏，英文界面显示；爬虫读原始 HTML 恒可见） */
 .about-en {
-  flex-shrink: 0; max-width: 760px; margin: 0 auto; padding: 2px 16px 6px;
-  font-size: 11px; line-height: 1.7; text-align: center;
+  flex: 1 1 auto; max-width: 62%; padding: 2px 8px;
+  font-size: 11px; line-height: 1.6; text-align: left;
   color: var(--txt3); opacity: .75; font-family: var(--font-d);
 }
 html[lang="zh-CN"] .about-en { display: none; }
+/* 英文界面：说明居左、入口居右；中文界面 footer 保持纯入口居中 */
+html[lang="en"] .site-footer { justify-content: space-between; gap: 24px; }
 
 /* 小程序推广弹层（footer 入口点击弹出，仿官方搜一搜物料） */
 .mp-box {
@@ -218,7 +221,8 @@ aside {
 /* ===== 移动端适配（≤820px：上下布局 + 触控优化） ===== */
 @media (max-width: 820px) {
   .site-footer { padding: 3px 8px; font-size: 11px; gap: 8px; }
-  .about-en { font-size: 10px; padding: 2px 12px 4px; }
+  .about-en { font-size: 10px; padding: 2px 10px; max-width: none; }
+  html[lang="en"] .site-footer { flex-direction: column; gap: 2px; }
   /* header：标题一行，按钮一行横向滚动 */
   header {
     flex-wrap: wrap; height: auto; min-height: 56px;
