@@ -17,6 +17,10 @@ interface Opts {
   noteEl: HTMLElement;
   copyBtn: HTMLElement;
   closeBtn: HTMLElement;
+  // 小程序 → PC 反向导入：输码取 payload
+  codeInput: HTMLInputElement;
+  codeImportBtn: HTMLElement;
+  onImport: (payload: string) => void;
   toast: (msg: string) => void;
 }
 
@@ -35,6 +39,29 @@ async function fetchCode(payload: string): Promise<string | null> {
   } catch (err) {
     // file:// 打开（浏览器禁 fetch）/ 浏览器跟踪防护 / 代理拦截都会走到这里，具体原因看此日志
     console.warn('[phoneLink] 传输服务请求失败:', err);
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** 输码取 payload；返回 null 表示网络失败，{err} 为服务端错误码，成功返回纯 payload（#p= 后段） */
+export async function fetchPayload(code: string): Promise<string | { err: string } | null> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const res = await fetch(TRANSFER_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get', code }),
+      signal: ctrl.signal,
+    });
+    const out = await res.json();
+    if (out && out.ok && out.payload) return String(out.payload);
+    if (out && out.err) return { err: String(out.err) };
+    return null;
+  } catch (err) {
+    console.warn('[phoneLink] 输码取图请求失败:', err);
     return null;
   } finally {
     clearTimeout(timer);
@@ -88,4 +115,26 @@ export function setupPhoneLink(opts: Opts): void {
       toast(t('t.linkCopied'));
     }
   });
+
+  // ---- 小程序 → PC：输码导入 ----
+  const doImport = async () => {
+    // 滤出码字符：整段粘贴「传输码 XXXXX」这类带前缀的文本也能识别
+    const code = opts.codeInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length !== 5) { toast(t('t.codeBad')); return; }
+    opts.codeImportBtn.setAttribute('disabled', '');
+    const out = await fetchPayload(code);
+    opts.codeImportBtn.removeAttribute('disabled');
+    if (out === null) { toast(t('t.codeGetFail')); return; }
+    if (typeof out === 'object') {
+      toast(out.err === 'expired' ? t('t.codeExpired')
+        : out.err === 'not_found' ? t('t.codeNotFound')
+        : t('t.codeGetFail'));
+      return;
+    }
+    opts.codeInput.value = '';
+    close();
+    opts.onImport(out);
+  };
+  opts.codeImportBtn.addEventListener('click', doImport);
+  opts.codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doImport(); });
 }

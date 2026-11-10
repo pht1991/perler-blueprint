@@ -116,6 +116,7 @@ html[lang="en"] .site-footer { justify-content: space-between; gap: 24px; }
 }
 .link-row input:focus { border-color: var(--teal, #2FBFBF); }
 .link-row .btn { flex: none; }
+.code-import-row { margin-top: 10px; }
 .link-box .mp-tip { margin-top: 12px; }
 
 /* 传输码区 */

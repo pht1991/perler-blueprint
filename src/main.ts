@@ -15,7 +15,7 @@ import { generateFromImage } from './ui/upload';
 import { Editor } from './ui/editor';
 import { setupPoster } from './ui/poster';
 import { setupGridExport } from './ui/gridExport';
-import { setupPhoneLink } from './ui/phoneLink';
+import { setupPhoneLink, fetchPayload } from './ui/phoneLink';
 import { setupCompare } from './ui/compare';
 import { setupPaletteSearch } from './ui/paletteSearch';
 import { setupBatch } from './ui/batch';
@@ -532,6 +532,13 @@ setupPhoneLink({
   noteEl: $('phoneNote'),
   copyBtn: $('phoneCopy'),
   closeBtn: $('phoneClose'),
+  codeInput: $<HTMLInputElement>('phoneCodeIn'),
+  codeImportBtn: $('phoneCodeImport'),
+  onImport: (payload) => {
+    const bp = decodeLinkPayload(payload);
+    if (!bp) { toast(t('t.importBad')); return; }
+    acceptImportedBp(bp, 'code');
+  },
   toast,
 });
 setupPaletteSearch({
@@ -622,18 +629,8 @@ onLangChange(() => {
   renderActive();
 });
 
-/** URL 导入：#p= 链接（小程序「复制电脑端链接」生成），导入后清掉 hash 防刷新重复导入 */
-function importFromHash() {
-  const m = location.hash.match(/^#p=(.+)$/);
-  if (!m) return;
-  let bp = null;
-  try {
-    // v1 时代浏览器可能对 hash 做百分号编码，兜底解一次；v2 的 %XXXX 是名称自有编码，绝不能再解
-    const frag = m[1].startsWith('1.') ? decodeURIComponent(m[1]) : m[1];
-    bp = decodeLinkPayload(frag);
-  } catch (e) { /* 坏编码按无效处理 */ }
-  history.replaceState(null, '', location.pathname + location.search);
-  if (!bp) { toast(t('t.importBad')); return; }
+/** 导入落库（URL hash / 传输码共用）：重命名去重 → 存档 → 刷新 UI */
+function acceptImportedBp(bp: NonNullable<ReturnType<typeof decodeLinkPayload>>, src: 'link' | 'code'): void {
   let title = bp.title || t('t.importTitle');
   let k = 2;
   while (localStorage.getItem(`perler-blueprint-${encodeURIComponent(title)}`)) title = `${bp.title || t('t.importTitle')} ${k++}`;
@@ -648,7 +645,44 @@ function importFromHash() {
   syncToolUI();
   syncIsland();
   toast(t('t.imported'));
-  track('import-link', `${bp.w}x${bp.h}`);
+  track(`import-${src}`, `${bp.w}x${bp.h}`);
+}
+
+/** URL 导入：#c= 传输码短链（小程序「复制链接」生成，含 5 位码），自动经云端取图导入 */
+async function importFromCodeHash() {
+  const m = location.hash.match(/^#c=([A-Za-z0-9]{1,12})$/);
+  if (!m) return;
+  const code = m[1].toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // 与 #p= 同款：导入即清 hash，防刷新重复触发
+  history.replaceState(null, '', location.pathname + location.search);
+  if (code.length !== 5) { toast(t('t.importBad')); return; }
+  toast(t('t.codeFetching'));
+  const out = await fetchPayload(code);
+  if (out === null) { toast(t('t.codeGetFail')); return; }
+  if (typeof out === 'object') {
+    toast(out.err === 'expired' ? t('t.codeExpired')
+      : out.err === 'not_found' ? t('t.codeNotFound')
+      : t('t.codeGetFail'));
+    return;
+  }
+  const bp = decodeLinkPayload(out);
+  if (!bp) { toast(t('t.importBad')); return; }
+  acceptImportedBp(bp, 'code');
+}
+
+/** URL 导入：#p= 链接（小程序「复制电脑端链接」生成），导入后清掉 hash 防刷新重复导入 */
+function importFromHash() {
+  const m = location.hash.match(/^#p=(.+)$/);
+  if (!m) return;
+  let bp = null;
+  try {
+    // v1 时代浏览器可能对 hash 做百分号编码，兜底解一次；v2 的 %XXXX 是名称自有编码，绝不能再解
+    const frag = m[1].startsWith('1.') ? decodeURIComponent(m[1]) : m[1];
+    bp = decodeLinkPayload(frag);
+  } catch (e) { /* 坏编码按无效处理 */ }
+  history.replaceState(null, '', location.pathname + location.search);
+  if (!bp) { toast(t('t.importBad')); return; }
+  acceptImportedBp(bp, 'link');
 }
 
 // ---- init ----
@@ -658,6 +692,7 @@ $('budgetHint').textContent = t('ui.unlimited');
 $('taskTitle').textContent = store.get().title || t('app.title');
 syncViewOps();
 importFromHash();
+importFromCodeHash();
 if (store.get().blueprint) { renderActive(); }
 else { grid.setPalette(pal()); grid.render(store.get()); }
 window.addEventListener('resize', () => { const s = store.get(); if (s.blueprint) { s.scale = 0; grid.fit(s); renderActive(); } });
