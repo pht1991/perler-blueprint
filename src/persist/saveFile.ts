@@ -50,6 +50,8 @@ export function restoreFromEmbedded(): void {
     for (const k of saveFileKeysFromSnap(snap)) if (!(k in snap.items)) localStorage.removeItem(k);
     for (const [k, v] of Object.entries(snap.items)) localStorage.setItem(k, v as string);
     localStorage.setItem(stampKey, String(snap.savedAt));
+    // 单文件打开属于新会话（sessionStorage 指针为空），补写指针保证本标签刷新也能恢复
+    sessionStorage.setItem('perler-session-title', t);
   } catch (e) { /* ignore */ }
 }
 

@@ -51,7 +51,11 @@ export function blueprintKey(s: AppState): string { return `perler-blueprint-${e
 
 export function saveBlueprint(s: AppState): void {
   if (!s.blueprint) return;
-  try { localStorage.setItem(blueprintKey(s), JSON.stringify(s.blueprint)); } catch (e) { /* ignore */ }
+  try {
+    localStorage.setItem(blueprintKey(s), JSON.stringify(s.blueprint));
+    // 会话级恢复指针：同一标签刷新恢复当前任务；新标签/新会话打开站点则干净着陆，不自动恢复
+    sessionStorage.setItem('perler-session-title', s.title);
+  } catch (e) { /* ignore */ }
 }
 
 export function loadBlueprint(s: AppState): void {

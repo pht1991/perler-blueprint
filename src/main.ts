@@ -583,8 +583,14 @@ store.subscribe((s, changed) => {
 });
 
 // ---- 打开已保存文件时恢复图纸 ----
+// 恢复范围限定在本会话（sessionStorage 指针）：同标签刷新/前进后退恢复上次任务；
+// 新标签页、新会话打开纯地址 = 干净着陆，不再把默认名任务自动画出来（导入图纸占位问题）
 (function restoreBlueprint() {
   const s = store.get();
+  try {
+    const st = sessionStorage.getItem('perler-session-title');
+    if (st) s.title = st;
+  } catch (e) { /* ignore */ }
   loadProgress(s); // 先跑一次兜底空值
   loadBlueprint(s);
   if (s.blueprint) {
