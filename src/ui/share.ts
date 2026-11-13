@@ -18,7 +18,10 @@ export type ShareOutcome = 'shared' | 'downloaded' | 'cancelled';
  * Android：可选相册/微信）。不支持时自动回退浏览器下载。
  */
 export async function shareOrDownload(file: File): Promise<ShareOutcome> {
-  if (canShareFiles([file])) {
+  // 分享面板只在触屏/移动设备走（iOS 存相册、Android 分微信）；
+  // Windows 桌面 Chrome/Edge 也支持 navigator.share，但系统共享面板没有「保存」项，
+  // 弹出来就是死路（已踩坑）——桌面一律直接下载
+  if (window.matchMedia('(pointer:coarse)').matches && canShareFiles([file])) {
     try {
       await navigator.share({ files: [file], title: file.name });
       return 'shared';
