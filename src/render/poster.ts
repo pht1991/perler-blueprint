@@ -28,7 +28,7 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
   const swatch = 56, rowH = 76, chartTop = 40;
   const prevSize = 900;
   const chartStart = 150 + prevSize + 40;
-  const FOOT = qr ? 118 : 0;   // 小程序码推广带高度
+  const FOOT = qr ? 190 : 0;   // 小程序码推广带高度
   const baseH = chartStart + chartTop + rows * rowH + 60;
   const H = baseH + FOOT;
 
@@ -88,12 +88,12 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
     const fy = baseH;
     x.strokeStyle = 'rgba(0,0,0,0.12)'; x.lineWidth = 2;
     x.beginPath(); x.moveTo(60, fy + 1); x.lineTo(W - 60, fy + 1); x.stroke();
-    const qs = 78, qy = fy + (FOOT - qs) / 2;
+    const qs = 150, qy = fy + (FOOT - qs) / 2;
     x.drawImage(qr, W - 60 - qs, qy, qs, qs);
-    x.fillStyle = INK; x.font = '700 30px Rajdhani, "Noto Sans SC", sans-serif';
-    x.fillText(t('poster.mpName'), 60, qy + 4);
-    x.fillStyle = INK2; x.font = '400 22px "Noto Sans SC", sans-serif';
-    x.fillText(t('poster.mpTip'), 60, qy + 46);
+    x.fillStyle = INK; x.font = '700 34px Rajdhani, "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpName'), 60, qy + 14);
+    x.fillStyle = INK2; x.font = '400 26px "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpTip'), 60, qy + 66);
   }
 
   return cv;
