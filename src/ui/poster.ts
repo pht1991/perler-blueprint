@@ -3,6 +3,7 @@ import { drawPoster } from '../render/poster';
 import { store } from '../state/store';
 import { PALETTE_BY_ID } from '../data/palettes';
 import { shareOrDownload, canvasToPngFile } from './share';
+import { loadMpCode } from './mpCode';
 import { t, dateLocale } from '../i18n';
 import { track } from '../analytics';
 
@@ -22,7 +23,7 @@ export interface PosterHandles {
 export function setupPoster(h: PosterHandles) {
   let lastCanvas: HTMLCanvasElement | null = null;
 
-  function build(): HTMLCanvasElement | null {
+  async function build(): Promise<HTMLCanvasElement | null> {
     const s = store.get();
     if (!s.blueprint) { h.toast(t('t.needBlueprint')); return null; }
     const palette = PALETTE_BY_ID[s.paletteId];
@@ -32,12 +33,13 @@ export function setupPoster(h: PosterHandles) {
       palette,
       used: h.getUsed(),
       meta: new Date().toLocaleDateString(dateLocale()),
+      qr: await loadMpCode(),
     });
     return cv;
   }
 
-  h.openBtn.addEventListener('click', () => {
-    const cv = build(); if (!cv) return;
+  h.openBtn.addEventListener('click', async () => {
+    const cv = await build(); if (!cv) return;
     lastCanvas = cv;
     track('poster-open');
     h.img.src = cv.toDataURL('image/png');

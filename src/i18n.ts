@@ -163,6 +163,8 @@ const dict: Record<string, Entry> = {
   // ---- 海报画布 ----
   'poster.chart': ['色号对照表', 'Color Chart'],
   'poster.beads': ['{n} 颗 · {pct}%', '{n} beads · {pct}%'],
+  'poster.mpName': ['我要拼豆图纸', '"Woyao Pindou Tuzhi"'],
+  'poster.mpTip': ['扫码用手机做图纸', 'Scan to make patterns on your phone'],
   'poster.batchMeta': ['批量合集 ', 'Batch collection '],
 
   // ---- 文件名 ----

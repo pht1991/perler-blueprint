@@ -1,10 +1,12 @@
 import type { Blueprint, Palette } from '../core/types';
+import { t } from '../i18n';
 
 export interface GridSheetInput {
   title: string;
   blueprint: Blueprint;
   palette: Palette;
   done?: Set<string>;   // 已拼色号（可选，画勾与小程序一致）
+  qr?: HTMLImageElement | null;   // 小程序码（可选，有则底部加推广带）
 }
 
 const PAPER = '#F5F2EA';
@@ -16,7 +18,7 @@ const INK2 = '#5B6B7A';
  * 与小程序「存相册」drawFull 同一版式：24px/格起步，整图封顶 4096px 自动缩格子。
  */
 export function drawGridSheet(input: GridSheetInput): HTMLCanvasElement {
-  const { blueprint: bp, palette, done } = input;
+  const { blueprint: bp, palette, done, qr } = input;
   const colorMap = new Map(palette.colors.map((c) => [c.code, c]));
 
   let cell = 24;
@@ -24,8 +26,9 @@ export function drawGridSheet(input: GridSheetInput): HTMLCanvasElement {
   while (bp.w * cell > MAX - MARGIN * 2 || bp.h * cell > MAX - MARGIN * 2) {
     cell = Math.floor(cell / 2);
   }
+  const FOOT = qr ? 84 : 0;   // 小程序码推广带高度
   const W = bp.w * cell + MARGIN * 2;
-  const H = bp.h * cell + MARGIN * 2 + HEAD;
+  const H = bp.h * cell + MARGIN * 2 + HEAD + FOOT;
 
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
@@ -91,6 +94,18 @@ export function drawGridSheet(input: GridSheetInput): HTMLCanvasElement {
   // 外框
   x.strokeStyle = 'rgba(0,0,0,0.25)'; x.lineWidth = 2;
   x.strokeRect(gx0, gy0, bp.w * cell, bp.h * cell);
+
+  // 小程序码推广带：打印图纸的溯源入口（右下角码 + 左侧一句话）
+  if (qr) {
+    x.textBaseline = 'top'; x.textAlign = 'left';
+    const fy = gy0 + bp.h * cell + MARGIN;
+    const qs = 64, qy = fy + (FOOT - qs) / 2;
+    x.drawImage(qr, W - MARGIN - qs, qy, qs, qs);
+    x.fillStyle = INK; x.font = '700 26px Rajdhani, "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpName'), MARGIN, qy + 6);
+    x.fillStyle = INK2; x.font = '400 20px "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpTip'), MARGIN, qy + 40);
+  }
 
   return cv;
 }

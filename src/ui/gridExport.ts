@@ -2,6 +2,7 @@ import { drawGridSheet } from '../render/gridExport';
 import { store } from '../state/store';
 import { PALETTE_BY_ID } from '../data/palettes';
 import { canvasToPngFile, shareOrDownload } from './share';
+import { loadMpCode } from './mpCode';
 import { t, dateLocale } from '../i18n';
 import { track } from '../analytics';
 
@@ -22,6 +23,7 @@ export function setupGridExport(h: GridExportHandles) {
       blueprint: s.blueprint,
       palette,
       done: h.getDone(),
+      qr: await loadMpCode(),
     });
     track('grid-export');
     const safe = (s.title || 'pattern').replace(/[\\/:*?"<>|]/g, '').trim() || 'pattern';

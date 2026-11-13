@@ -7,6 +7,7 @@ export interface PosterInput {
   palette: Palette;
   used: Map<string, number>;
   meta?: string;
+  qr?: HTMLImageElement | null;   // 小程序码（可选，有则底部加推广带）
 }
 
 const PAPER = '#F5F2EA';
@@ -16,7 +17,7 @@ const RED = '#FF4655';
 
 /** 绘制分享海报（竖版），返回离屏 canvas。内容：标题 + 图纸预览 + 色号对照表。 */
 export function drawPoster(input: PosterInput): HTMLCanvasElement {
-  const { title, blueprint, palette, used, meta } = input;
+  const { title, blueprint, palette, used, meta, qr } = input;
   const W = 1080;
   const colorMap = new Map(palette.colors.map((c) => [c.code, c]));
 
@@ -27,7 +28,9 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
   const swatch = 56, rowH = 76, chartTop = 40;
   const prevSize = 900;
   const chartStart = 150 + prevSize + 40;
-  const H = chartStart + chartTop + rows * rowH + 60;
+  const FOOT = qr ? 118 : 0;   // 小程序码推广带高度
+  const baseH = chartStart + chartTop + rows * rowH + 60;
+  const H = baseH + FOOT;
 
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
@@ -79,6 +82,19 @@ export function drawPoster(input: PosterInput): HTMLCanvasElement {
     x.fillText(name.slice(0, 8), ix + swatch + 14, iy + 34);
     x.fillText(t('poster.beads', { n, pct: ((n / total) * 100).toFixed(1) }), ix + swatch + 14, iy + 58);
   });
+
+  // 小程序码推广带：实物传播入口（打印/晒图场景扫码即达）
+  if (qr) {
+    const fy = baseH;
+    x.strokeStyle = 'rgba(0,0,0,0.12)'; x.lineWidth = 2;
+    x.beginPath(); x.moveTo(60, fy + 1); x.lineTo(W - 60, fy + 1); x.stroke();
+    const qs = 78, qy = fy + (FOOT - qs) / 2;
+    x.drawImage(qr, W - 60 - qs, qy, qs, qs);
+    x.fillStyle = INK; x.font = '700 30px Rajdhani, "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpName'), 60, qy + 4);
+    x.fillStyle = INK2; x.font = '400 22px "Noto Sans SC", sans-serif';
+    x.fillText(t('poster.mpTip'), 60, qy + 46);
+  }
 
   return cv;
 }
