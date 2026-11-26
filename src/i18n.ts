@@ -15,6 +15,8 @@ const dict: Record<string, Entry> = {
   'ui.footerRepo': ['GitHub 开源仓库', 'GitHub repository'],
   'ui.footerMp': ['微信小程序', 'WeChat Mini Program'],
   'ui.footerMpTip': ['扫码或搜一搜打开小程序', 'Scan or search to open the mini program'],
+  'ui.sponsor': ['☕ 赞助', '☕ Sponsor'],
+  'ui.sponsorTip': ['请作者喝杯奶茶 · 支持开源', 'Buy the author a milk tea · support open source'],
   'ui.mpBrand': ['微信搜一搜', 'Search on WeChat'],
   'ui.mpCodeAlt': ['我要拼豆图纸 · 小程序码', '"woyaopindou tuzhi" mini program QR code'],
   'ui.mpTip': ['扫码或搜索打开小程序 · 图纸双端同步', 'Scan or search to open · patterns sync across devices'],
