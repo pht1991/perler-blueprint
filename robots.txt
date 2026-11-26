@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://perler.phtbyte.com/sitemap.xml

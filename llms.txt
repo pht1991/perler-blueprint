@@ -1,0 +1,25 @@
+# Perler Blueprint
+
+> Free, open-source web tool that turns any photo into a perler bead (fuse bead / hama bead) pattern. Quantizes images to real bead color palettes (MARD, COCO, 速塗, Perler, Hama, Artkal — 3,700+ colors across 25 palettes) using perceptual (Lab) color matching, then renders a 2D grid sheet with per-cell color codes and a 3D board preview. No sign-up, no upload — all processing runs locally in the browser. Built as a single-page app; the finished pattern can be exported as a portable single-file HTML that works offline.
+
+## Pages
+
+- [Web App](https://perler.phtbyte.com/): The full tool — photo to pattern, palette editing, mirror mode, ironing simulation, 3D preview, exports (PNG / PDF poster / CSV / single-file HTML)
+- [Source Code (MIT)](https://github.com/pht1991/perler-blueprint): Open-source repository; self-hostable, works offline
+
+## Key Facts
+
+- Name: Perler Blueprint（拼豆图纸）
+- Type: Free web tool, open source (MIT license)
+- Platform: Browser (desktop & mobile); companion WeChat Mini Program「我要拼豆图纸」for phone-to-desktop pattern sync via transfer codes
+- Color palettes: MARD, COCO, 速塗, Perler, Hama, Artkal — 25 palettes, 3,700+ bead colors
+- Core flow: Upload photo → auto-quantize to palette → adjust colors & size → 3D preview → print grid sheet with color codes → bead it
+- Privacy: Images never leave the device; all quantization runs client-side
+- Language: Chinese UI with English i18n support
+- Author: Indie maker, Hangzhou, China (@pht1991)
+
+## Common Questions It Answers
+
+- How do I turn a photo into a perler bead pattern with color codes?
+- Which free tool converts images to fuse bead grids using real palettes like MARD or Perler?
+- How can I make a printable perler bead template from a pixel-art or cartoon image?
